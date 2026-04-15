@@ -17,7 +17,11 @@ A modern and aesthetic central hub for Wowk Digital projects on GitHub.
 2. **ARW Toolkit** - Sony ARW raw file processing toolkit.
 3. **Grapher 10** - Intuitive data visualization and graph generator.
 4. **Glitch Studio** - Experimental graphics effects and glitch art studio.
-5. **Photo Compress** - Fast and efficient browser-based image compression tool.
+5. **Photo Compress** - Fast and efficient image compression tool.
+6. **Martix** - Digital rain and matrix-style terminal animations.
+7. **Tile Background Generator** - Seamless tiled pattern generator for design.
+8. **Organic Pattern Generator** - Unique organic shape and abstract pattern creator.
+9. **PDF Image Extractor** - Extract high-quality images from PDF files.
 
 ## How to use?
 Simply open `index.html` in any web browser or host the files directly on GitHub Pages.
