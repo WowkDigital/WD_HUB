@@ -17,6 +17,7 @@ A modern and aesthetic central hub for Wowk Digital projects on GitHub.
 2. **ARW Toolkit** - Sony ARW raw file processing toolkit.
 3. **Grapher 10** - Intuitive data visualization and graph generator.
 4. **Glitch Studio** - Experimental graphics effects and glitch art studio.
+5. **Photo Compress** - Fast and efficient browser-based image compression tool.
 
 ## How to use?
 Simply open `index.html` in any web browser or host the files directly on GitHub Pages.
