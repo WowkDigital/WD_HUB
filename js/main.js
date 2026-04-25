@@ -22,7 +22,7 @@ function renderProjects() {
                 </p>
                 
                 <div class="mt-auto flex justify-between items-center">
-                    <div class="flex items-center text-sm font-medium text-${project.color}">
+                    <div class="flex items-center px-4 py-2 rounded-xl text-sm font-bold bg-${project.color}/10 text-${project.color} group-hover:bg-${project.color} group-hover:text-white group-hover:scale-105 transition-all duration-300 border border-${project.color}/20 group-hover:border-transparent">
                         Launch Project <i data-lucide="arrow-up-right" class="w-4 h-4 ml-2"></i>
                     </div>
                     <a href="${project.github}" target="_blank" onclick="event.stopPropagation()" class="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all duration-200 border border-white/5 hover:border-white/20" title="View Repository">
