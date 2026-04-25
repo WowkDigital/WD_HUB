@@ -108,32 +108,14 @@ body {
     mix-blend-mode: overlay;
 }
 
-/* --- Matrix Effect (Placeholder for future use) --- */
-.matrix-active {
-    /* Potential matrix specific card styles */
-    border-color: #4ade80 !important;
-}
+/* --- Matrix Effect --- */
 
-/* --- Floating Animation --- */
-@keyframes float-mini {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-5px); }
-}
 
-.float-active {
-    animation: float-mini 3s ease-in-out infinite;
-}
+/* --- Floating Animation removed --- */
 
-/* --- Neon Pulse Effect --- */
-@keyframes neon-pulse {
-    0%, 100% { box-shadow: 0 0 5px rgba(99, 102, 241, 0.2), 0 0 10px rgba(99, 102, 241, 0.1); }
-    50% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.4), 0 0 30px rgba(99, 102, 241, 0.2); }
-}
 
-.neon-active {
-    animation: neon-pulse 2s infinite;
-    border-color: rgba(99, 102, 241, 0.5) !important;
-}
+/* --- Neon Pulse Effect removed --- */
+
 
 /* --- Shake Effect --- */
 @keyframes shake-mini {

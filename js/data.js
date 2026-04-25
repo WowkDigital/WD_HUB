@@ -5,8 +5,7 @@ const projects = [
         url: "https://wowkdigital.github.io/CollageCreator/",
         github: "https://github.com/WowkDigital/CollageCreator",
         icon: "layout-grid",
-        color: "primary",
-        effect: "float"
+        color: "primary"
     },
     {
         title: "ARW Toolkit",
@@ -42,10 +41,10 @@ const projects = [
         color: "emerald-400"
     },
     {
-        title: "Martix Effect",
+        title: "Matrix Effect",
         description: "Digital rain and matrix-style terminal animations. Customizable visual effects for cyberpunk aesthetics.",
-        url: "https://wowkdigital.github.io/martix/",
-        github: "https://github.com/WowkDigital/martix",
+        url: "https://wowkdigital.github.io/matrix/",
+        github: "https://github.com/WowkDigital/matrix",
         icon: "terminal",
         color: "lime-400",
         effect: "matrix"

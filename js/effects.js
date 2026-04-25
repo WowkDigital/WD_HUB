@@ -26,30 +26,77 @@ const Effects = {
      * Matrix effect (subtle pulse or green glow)
      */
     matrix: (element) => {
-        // Just a placeholder for now, can be expanded with canvas or complex CSS
-        const trigger = () => {
-            element.classList.add('matrix-active');
-            setTimeout(() => {
-                element.classList.remove('matrix-active');
-            }, 1000);
+        const container = element.querySelector('.glass');
+        if (!container) return;
+
+        // Create canvas
+        const canvas = document.createElement('canvas');
+        canvas.style.position = 'absolute';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        canvas.style.zIndex = '0';
+        canvas.style.opacity = '0.15';
+        canvas.style.pointerEvents = 'none';
+        container.appendChild(canvas);
+
+        const ctx = canvas.getContext('2d');
+        let width, height, columns;
+        const fontSize = 10; // Smaller font
+        let drops = [];
+
+        const resize = () => {
+            // Get actual pixel dimensions for the canvas to prevent stretching
+            const rect = container.getBoundingClientRect();
+            width = canvas.width = rect.width;
+            height = canvas.height = rect.height;
             
-            setTimeout(trigger, 5000);
+            // Fewer columns by adding more space between them
+            columns = Math.floor(width / (fontSize * 1.5)); 
+            drops = new Array(columns).fill(0).map(() => Math.random() * -100); // Random start positions
         };
-        setTimeout(trigger, 2000);
+
+        window.addEventListener('resize', resize);
+        resize();
+
+        const characters = '01';
+
+        function draw() {
+            // Fading trail
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillRect(0, 0, width, height);
+
+            ctx.fillStyle = '#4ade80';
+            ctx.font = `${fontSize}px monospace`;
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = characters.charAt(Math.floor(Math.random() * characters.length));
+                // i * fontSize * 1.5 to match the column spacing in resize()
+                ctx.fillText(text, i * fontSize * 1.5, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > height && Math.random() > 0.985) { // Lower probability to restart
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        const interval = setInterval(draw, 80); // Slower animation (was 50ms)
     },
 
     /**
-     * Floating effect
+     * Floating effect removed
      */
     float: (element) => {
-        element.classList.add('float-active');
+        // Disabled
     },
 
     /**
      * Neon pulse effect
      */
     neon: (element) => {
-        element.classList.add('neon-active');
+        // Neon highlight removed as per user request
     },
 
     /**
