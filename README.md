@@ -22,6 +22,9 @@ A modern and aesthetic central hub for Wowk Digital projects on GitHub.
 7. **Tile Background Generator** - Seamless tiled pattern generator for design.
 8. **Organic Pattern Generator** - Unique organic shape and abstract pattern creator.
 9. **PDF Image Extractor** - Extract high-quality images from PDF files.
+10. **TextLab** - Advanced text analysis and processing utility.
+11. **WowkDigitalFooter** - Branded footer library for Wowk Digital projects.
+12. **1D Automata** - Cellular automata simulator and visualizer.
 
 ## How to use?
 Simply open `index.html` in any web browser or host the files directly on GitHub Pages.
