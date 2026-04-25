@@ -1,0 +1,158 @@
+body {
+    background-color: #030712;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.glass {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-hover:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+}
+
+.bg-glow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-image: url('../assets/bg.png');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.4;
+}
+
+.bg-pattern {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    opacity: 0.2;
+    background-image: radial-gradient(#6366f1 0.5px, transparent 0.5px);
+    background-size: 24px 24px;
+}
+
+.text-gradient {
+    background: linear-gradient(to right, #6366f1, #a855f7, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.card-glow {
+    position: relative;
+}
+
+.card-glow::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(45deg, #6366f1, #a855f7, #ec4899);
+    z-index: -1;
+    border-radius: 1.5rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    filter: blur(15px);
+}
+
+.card-glow:hover::after {
+    opacity: 0.4;
+}
+
+/* --- Glitch Effect --- */
+@keyframes glitch-skew {
+    0% { transform: skew(0deg) translate(0); filter: hue-rotate(0deg); }
+    10% { transform: skew(-4deg) translate(-2px, 2px); filter: hue-rotate(90deg) brightness(1.2); }
+    20% { transform: skew(4deg) translate(2px, -2px); filter: hue-rotate(180deg) brightness(1.5); }
+    30% { transform: skew(-2deg) translate(-1px, 1px); filter: hue-rotate(270deg) brightness(1.2); }
+    40% { transform: skew(2deg) translate(1px, -1px); filter: hue-rotate(360deg) brightness(1.1); }
+    50% { transform: skew(0deg) translate(0); filter: hue-rotate(0deg); }
+    100% { transform: skew(0deg) translate(0); filter: hue-rotate(0deg); }
+}
+
+@keyframes glitch-flash {
+    0%, 50%, 100% { opacity: 1; }
+    25% { opacity: 0.8; }
+    75% { opacity: 0.9; }
+}
+
+.glitch-active {
+    animation: glitch-skew 0.3s ease-in-out, glitch-flash 0.3s ease-in-out;
+    position: relative;
+}
+
+.glitch-active h2 {
+    text-shadow: 2px 0 #ff00c1, -2px 0 #00fff9;
+    transition: none;
+}
+
+.glitch-active::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(99, 102, 241, 0.1);
+    z-index: 10;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+}
+
+/* --- Matrix Effect (Placeholder for future use) --- */
+.matrix-active {
+    /* Potential matrix specific card styles */
+    border-color: #4ade80 !important;
+}
+
+/* --- Floating Animation --- */
+@keyframes float-mini {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.float-active {
+    animation: float-mini 3s ease-in-out infinite;
+}
+
+/* --- Neon Pulse Effect --- */
+@keyframes neon-pulse {
+    0%, 100% { box-shadow: 0 0 5px rgba(99, 102, 241, 0.2), 0 0 10px rgba(99, 102, 241, 0.1); }
+    50% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.4), 0 0 30px rgba(99, 102, 241, 0.2); }
+}
+
+.neon-active {
+    animation: neon-pulse 2s infinite;
+    border-color: rgba(99, 102, 241, 0.5) !important;
+}
+
+/* --- Shake Effect --- */
+@keyframes shake-mini {
+    0%, 100% { transform: translate(0, 0); }
+    25% { transform: translate(1px, 1px); }
+    50% { transform: translate(-1px, 1px); }
+    75% { transform: translate(1px, -1px); }
+}
+
+.shake-active {
+    animation: shake-mini 0.1s infinite;
+}
+
+/* --- Hue Rotate Effect --- */
+@keyframes hue-rotate {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+}
+
+.hue-active {
+    animation: hue-rotate 10s linear infinite;
+}
