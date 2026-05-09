@@ -1,5 +1,14 @@
 const projects = [
     {
+        title: "Transmutation Circle",
+        description: "A professional alchemical design studio for creating intricate geometric patterns inspired by Fullmetal Alchemist.",
+        url: "https://wowkdigital.github.io/TransmutationCircle/",
+        github: "https://github.com/WowkDigital/TransmutationCircle",
+        icon: "flask-conical",
+        color: "red-500",
+        effect: "hueRotate"
+    },
+    {
         title: "Collage Creator",
         description: "A powerful tool for creating creative compositions and photo collages directly in the browser.",
         url: "https://wowkdigital.github.io/CollageCreator/",
