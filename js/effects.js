@@ -13,11 +13,11 @@ const Effects = {
             setTimeout(() => {
                 element.classList.remove('glitch-active');
             }, 300);
-            
+
             // Random interval between 3 and 10 seconds
-            setTimeout(trigger, Math.random() * 7000 + 3000);
+            setTimeout(trigger, Math.random() * 2000 + 2000);
         };
-        
+
         // Initial delay
         setTimeout(trigger, Math.random() * 3000 + 1000);
     },
@@ -51,9 +51,9 @@ const Effects = {
             const rect = container.getBoundingClientRect();
             width = canvas.width = rect.width;
             height = canvas.height = rect.height;
-            
+
             // Fewer columns by adding more space between them
-            columns = Math.floor(width / (fontSize * 1.5)); 
+            columns = Math.floor(width / (fontSize * 1.5));
             drops = new Array(columns).fill(0).map(() => Math.random() * -100); // Random start positions
         };
 

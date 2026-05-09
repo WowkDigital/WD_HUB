@@ -1,32 +1,61 @@
+/**
+ * Assets Manifest - maps folders to file lists
+ * Since browser JS cannot list local folders, this manifest acts as a registry.
+ */
+const assetsManifest = {
+    "assets/ARW_Toolkit": [
+        "assets/ARW_Toolkit/ARW_Toolkit_a1.png",
+        "assets/ARW_Toolkit/ARW_Toolkit_a2.png"
+    ],
+    "assets/GlitchStudio": [
+        "assets/GlitchStudio/Glitch Studio (1).png",
+        "assets/GlitchStudio/Glitch Studio (2).png"
+    ],
+    "assets/TextLab": [
+        "assets/TextLab/TextLab.png"
+    ],
+    "assets/TransmutationCircle": [
+        "assets/TransmutationCircle/tc_1.png",
+        "assets/TransmutationCircle/tc_2.png"
+    ]
+};
+
 const projects = [
     {
         title: "Transmutation Circle",
         description: "A professional alchemical design studio for creating intricate geometric patterns inspired by Fullmetal Alchemist.",
+        longDescription: "Transmutation Circle is a powerful web-based application that allows users to design and generate complex alchemical circles. It features a modular SVG engine, customizable layers, and real-time rendering. Perfect for artists, designers, and fans of the series who want to explore geometric alchemy.",
         url: "https://wowkdigital.github.io/TransmutationCircle/",
         github: "https://github.com/WowkDigital/TransmutationCircle",
         icon: "flask-conical",
         color: "red-500",
-        effect: "hueRotate"
+        effect: "hueRotate",
+        imageFolder: "assets/TransmutationCircle"
     },
     {
         title: "Collage Creator",
         description: "A powerful tool for creating creative compositions and photo collages directly in the browser.",
+        longDescription: "Collage Creator is a professional-grade tool designed for photographers and digital artists. It offers a drag-and-drop interface, multiple layout templates, and advanced filter options. Users can export their creations in high-resolution formats suitable for both web and print.",
         url: "https://wowkdigital.github.io/CollageCreator/",
         github: "https://github.com/WowkDigital/CollageCreator",
         icon: "layout-grid",
-        color: "primary"
+        color: "primary",
+        images: ["https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&q=80&w=800"]
     },
     {
         title: "ARW Toolkit",
         description: "A set of tools dedicated to working with Sony raw files (ARW). Automate and optimize your photography workflow.",
+        longDescription: "The ARW Toolkit is a specialized utility for Sony camera users. It provides tools for batch processing, metadata extraction, and preview generation of Sony ARW files. It's built to streamline the professional photography workflow by automating repetitive tasks.",
         url: "https://wowkdigital.github.io/ARW_Toolkit/",
         github: "https://github.com/WowkDigital/ARW_Toolkit",
         icon: "camera",
-        color: "secondary"
+        color: "secondary",
+        imageFolder: "assets/ARW_Toolkit"
     },
     {
         title: "Grapher 10",
         description: "Intuitive graph and data visualization generator. Export beautiful, publication-ready graphics for your reports.",
+        longDescription: "Grapher 10 is an advanced data visualization platform. It supports various chart types including line, bar, pie, and radar. With its intuitive interface and deep customization options, it enables users to turn complex datasets into beautiful, understandable visual stories.",
         url: "https://wowkdigital.github.io/grapher_10/",
         github: "https://github.com/WowkDigital/grapher_10",
         icon: "bar-chart-3",
@@ -35,15 +64,19 @@ const projects = [
     {
         title: "Glitch Studio",
         description: "Experimental graphics effects studio. Destroy, deform and create unique glitch art effects with precision.",
+        longDescription: "Glitch Studio is an experimental playground for digital art. It uses advanced canvas manipulation techniques to create intentional artifacts, RGB splits, and data moshing effects. Every result is unique and can be captured as high-quality image or video loops.",
         url: "https://wowkdigital.github.io/glitch_studio/",
         github: "https://github.com/WowkDigital/glitch_studio",
         icon: "zap",
         color: "indigo-400",
-        effect: "glitch"
+        effect: "glitch",
+        images: [],
+        imageFolder: "assets/GlitchStudio"
     },
     {
         title: "Photo Compress",
         description: "Fast and efficient image compression tool. Reduce file size while maintaining high quality directly in your browser.",
+        longDescription: "Photo Compress utilizes modern compression algorithms to drastically reduce image file sizes without noticeable quality loss. It runs entirely in the browser, ensuring privacy and speed. Perfect for web developers and social media managers who need to optimize content on the fly.",
         url: "https://wowkdigital.github.io/photo_compress/",
         github: "https://github.com/WowkDigital/photo_compress",
         icon: "file-image",
@@ -52,6 +85,7 @@ const projects = [
     {
         title: "Matrix Effect",
         description: "Digital rain and matrix-style terminal animations. Customizable visual effects for cyberpunk aesthetics.",
+        longDescription: "A faithful recreation of the iconic 'Matrix' digital rain. This project is highly customizable, allowing users to change characters, colors, speed, and density. It's built with performance in mind, using optimized canvas rendering to ensure smooth animations even on low-end devices.",
         url: "https://wowkdigital.github.io/matrix/",
         github: "https://github.com/WowkDigital/matrix",
         icon: "terminal",
@@ -61,6 +95,7 @@ const projects = [
     {
         title: "Tile Generator",
         description: "Create seamless, high-quality tiled backgrounds and patterns for web and graphic design projects.",
+        longDescription: "Tile Generator is a specialized tool for creating repeatable patterns. It automatically handles edge matching and seamless transitions. Users can export tiles in various sizes and formats, making it an essential tool for UI/UX designers and web developers.",
         url: "https://wowkdigital.github.io/TileBackgroundGenerator/",
         github: "https://github.com/WowkDigital/TileBackgroundGenerator",
         icon: "layout-template",
@@ -69,6 +104,7 @@ const projects = [
     {
         title: "Organic Patterns",
         description: "Generate unique organic shapes and abstract patterns with fluid motion and artistic flair.",
+        longDescription: "Inspired by biological forms and fluid dynamics, Organic Patterns generates mesmerizing, living visuals. It uses perlin noise and particle systems to create shapes that feel natural and alive. Users can interact with the patterns in real-time.",
         url: "https://wowkdigital.github.io/organic_pattern_generator/",
         github: "https://github.com/WowkDigital/organic_pattern_generator",
         icon: "infinity",
@@ -78,6 +114,7 @@ const projects = [
     {
         title: "PDF Extractor",
         description: "Extract high-resolution images from PDF files quickly and easily, directly within your browser.",
+        longDescription: "PDF Extractor simplifies the process of getting images out of PDF documents. It scans PDFs for embedded image data and allows users to download them in their original quality. No server-side processing is required, making it fast and secure.",
         url: "https://wowkdigital.github.io/pdf_extract_images/",
         github: "https://github.com/WowkDigital/pdf_extract_images",
         icon: "file-output",
@@ -87,15 +124,19 @@ const projects = [
     {
         title: "TextLab",
         description: "Advanced text analysis and processing utility. Real-time statistics, character limits, and intelligent text segmentation.",
+        longDescription: "TextLab is a comprehensive suite of text manipulation tools. From simple character counting to complex regex operations and sentiment analysis, it provides a centralized workspace for anyone working with large amounts of text data.",
         url: "https://wowkdigital.github.io/TextLab/",
         github: "https://github.com/WowkDigital/TextLab",
         icon: "file-text",
         color: "amber-400",
-        effect: "hueRotate"
+        effect: "hueRotate",
+        images: [],
+        imageFolder: "assets/TextLab"
     },
     {
         title: "WD Footer",
         description: "A lightweight, customizable branded footer for Wowk Digital projects. Easy to integrate with dynamic links.",
+        longDescription: "WD Footer is a reusable web component designed to provide a consistent branding experience across all Wowk Digital projects. It's lightweight, customizable, and features built-in support for social links and copyright notices.",
         url: "https://github.com/WowkDigital/WowkDigitalFooter",
         github: "https://github.com/WowkDigital/WowkDigitalFooter",
         icon: "panel-bottom",
@@ -104,6 +145,7 @@ const projects = [
     {
         title: "1D Automata",
         description: "Explore the fascinating world of 1D cellular automata. Visualize patterns emerging from simple mathematical rules.",
+        longDescription: "1D Automata is an educational tool for exploring Stephen Wolfram's cellular automata rules. It visualizes how simple local rules can lead to complex global behaviors. It's a tribute to the beauty of mathematical emergence and chaos theory.",
         url: "https://wowkdigital.github.io/1D_automata/",
         github: "https://github.com/WowkDigital/1D_automata",
         icon: "binary",

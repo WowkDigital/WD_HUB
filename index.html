@@ -46,6 +46,22 @@
         </main>
     </div>
 
+    <!-- Project Details Modal -->
+    <div id="project-modal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-[#030712]/80 backdrop-blur-md modal-overlay"></div>
+        <div class="absolute inset-0 overflow-y-auto pt-20 pb-12 px-4">
+            <div class="max-w-4xl mx-auto glass rounded-[2.5rem] overflow-hidden relative border-white/10 shadow-2xl animate-modal-in">
+                <button id="close-modal" class="absolute top-6 right-6 p-3 rounded-2xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all z-10 border border-white/5 hover:border-white/10">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+                
+                <div id="modal-content">
+                    <!-- Dynamic Content -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- External Scripts -->
     <script src="https://unpkg.com/lucide@0.453.0/dist/umd/lucide.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/WowkDigital/WowkDigitalFooter@latest/wowk-digital-footer.js"></script>
