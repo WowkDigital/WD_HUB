@@ -11,6 +11,9 @@ const assetsManifest = {
         "assets/GlitchStudio/Glitch Studio (1).png",
         "assets/GlitchStudio/Glitch Studio (2).png"
     ],
+    "assets/RailwayNetwork": [
+        "assets/RailwayNetwork/railway_network.png"
+    ],
     "assets/TextLab": [
         "assets/TextLab/TextLab.png"
     ],
@@ -150,5 +153,16 @@ const projects = [
         github: "https://github.com/WowkDigital/1D_automata",
         icon: "binary",
         color: "blue-400"
+    },
+    {
+        title: "Railway Network",
+        description: "An advanced procedural railway network generator built with Vanilla JavaScript and HTML5 Canvas.",
+        longDescription: "Railway Network is a sophisticated simulation tool that generates unique, efficient transit layouts using geometric algorithms. It features topological optimization (2-opt/Or-opt), smart connectivity via Union-Find, and physical track constraints to ensure realistic and traversable networks. Perfect for urban planning enthusiasts and fans of procedural generation.",
+        url: "https://wowkdigital.github.io/railway_network/",
+        github: "https://github.com/WowkDigital/railway_network",
+        icon: "train",
+        color: "blue-500",
+        effect: "neon",
+        imageFolder: "assets/RailwayNetwork"
     }
 ];
