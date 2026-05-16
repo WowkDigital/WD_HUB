@@ -20,6 +20,9 @@ const assetsManifest = {
     "assets/TransmutationCircle": [
         "assets/TransmutationCircle/tc_1.png",
         "assets/TransmutationCircle/tc_2.png"
+    ],
+    "assets/GravitySimulator": [
+        "assets/GravitySimulator/preview.png"
     ]
 };
 
@@ -164,5 +167,16 @@ const projects = [
         color: "blue-500",
         effect: "neon",
         imageFolder: "assets/RailwayNetwork"
+    },
+    {
+        title: "Gravity Simulator",
+        description: "A high-performance N-body gravity simulator for visualizing complex celestial mechanics and orbital dynamics.",
+        longDescription: "Gravity Simulator is an advanced physics-based application designed to simulate gravitational interactions between multiple celestial bodies. Built with a custom physics engine, it features real-time orbital calculations, planetary system creation, and stunning visual representations of gravitational fields. Ideal for students, educators, and space enthusiasts exploring the beauty of orbital mechanics.",
+        url: "https://wowkdigital.github.io/GravitySimulatorWD/",
+        github: "https://github.com/WowkDigital/GravitySimulatorWD",
+        icon: "orbit",
+        color: "purple-500",
+        effect: "hueRotate",
+        imageFolder: "assets/GravitySimulator"
     }
 ];
