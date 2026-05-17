@@ -11,6 +11,15 @@ const assetsManifest = {
         "assets/GlitchStudio/Glitch Studio (1).png",
         "assets/GlitchStudio/Glitch Studio (2).png"
     ],
+    "assets/GravitySimulator": [
+        "assets/GravitySimulator/preview.png"
+    ],
+    "assets/LogoVectorWD": [
+        "assets/LogoVectorWD/preview.png"
+    ],
+    "assets/PerlinNoise": [
+        "assets/PerlinNoise/preview.png"
+    ],
     "assets/RailwayNetwork": [
         "assets/RailwayNetwork/railway_network.png"
     ],
@@ -20,9 +29,6 @@ const assetsManifest = {
     "assets/TransmutationCircle": [
         "assets/TransmutationCircle/tc_1.png",
         "assets/TransmutationCircle/tc_2.png"
-    ],
-    "assets/GravitySimulator": [
-        "assets/GravitySimulator/preview.png"
     ]
 };
 
@@ -178,5 +184,27 @@ const projects = [
         color: "purple-500",
         effect: "hueRotate",
         imageFolder: "assets/GravitySimulator"
+    },
+    {
+        title: "Perlin Noise",
+        description: "A premium, interactive web-based visualization tool for exploring multi-dimensional Perlin Noise and Fractional Brownian Motion (fBm).",
+        longDescription: "PERLIN//NOISE Explorer is a high-performance web-based visualization tool designed for exploring multi-dimensional Perlin Noise and Fractional Brownian Motion (fBm). It features 8 advanced noise visualization modes (including Terrain, Plasma, Marble, Flow, Domain Warp, and more), interactive HSL-balanced color palettes, real-time parameters tweaking, smooth zoom and pan controls, and a custom schema-based state sharing system that serializes settings directly into the URL.",
+        url: "https://wowkdigital.github.io/PerlinNoiseWD/",
+        github: "https://github.com/WowkDigital/PerlinNoiseWD",
+        icon: "waves",
+        color: "indigo-500",
+        effect: "hueRotate",
+        imageFolder: "assets/PerlinNoise"
+    },
+    {
+        title: "Logo Vector",
+        description: "A minimalist, high-fidelity repository holding the official vector logo for WowkDigital.",
+        longDescription: "Logo Vector is an interactive asset platform holding the official vector logo for WowkDigital. Designed with maximum pixel precision, it offers real-time rendering, custom color selection, dynamic background swatches, scalable PNG/SVG downloads, and ready-to-use developer integration snippets for HTML, CSS, SVG, and React.",
+        url: "https://wowkdigital.github.io/LogoVectorWD/",
+        github: "https://github.com/WowkDigital/LogoVectorWD",
+        icon: "pen-tool",
+        color: "slate-400",
+        effect: "hueRotate",
+        imageFolder: "assets/LogoVectorWD"
     }
 ];

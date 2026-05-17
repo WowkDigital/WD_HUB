@@ -13,18 +13,23 @@ A modern and aesthetic central hub for Wowk Digital projects on GitHub.
 - **Dark Mode** (Default theme)
 
 ## Projects Included
-1. **Collage Creator** - Tool for creating creative photo compositions.
-2. **ARW Toolkit** - Sony ARW raw file processing toolkit.
-3. **Grapher 10** - Intuitive data visualization and graph generator.
-4. **Glitch Studio** - Experimental graphics effects and glitch art studio.
-5. **Photo Compress** - Fast and efficient image compression tool.
-6. **Martix** - Digital rain and matrix-style terminal animations.
-7. **Tile Background Generator** - Seamless tiled pattern generator for design.
-8. **Organic Pattern Generator** - Unique organic shape and abstract pattern creator.
-9. **PDF Image Extractor** - Extract high-quality images from PDF files.
-10. **TextLab** - Advanced text analysis and processing utility.
-11. **WowkDigitalFooter** - Branded footer library for Wowk Digital projects.
-12. **1D Automata** - Cellular automata simulator and visualizer.
+1. **Transmutation Circle** - A professional alchemical design studio for creating intricate geometric patterns.
+2. **Collage Creator** - Tool for creating photo compositions.
+3. **ARW Toolkit** - Sony ARW raw file processing toolkit.
+4. **Grapher 10** - Intuitive data visualization and graph generator.
+5. **Glitch Studio** - Experimental graphics effects and glitch art studio.
+6. **Photo Compress** - Fast and efficient image compression tool.
+7. **Matrix Effect** - Digital rain and matrix-style terminal animations.
+8. **Tile Background Generator** - Seamless tiled pattern generator for design.
+9. **Organic Pattern Generator** - Unique organic shape and abstract pattern creator.
+10. **PDF Image Extractor** - Extract high-quality images from PDF files.
+11. **TextLab** - Advanced text analysis and processing utility.
+12. **WowkDigitalFooter** - Branded footer library for Wowk Digital projects.
+13. **1D Automata** - Cellular automata simulator and visualizer.
+14. **Railway Network** - Procedural railway network generator.
+15. **Gravity Simulator** - High-performance celestial N-body simulation tool.
+16. **Perlin Noise** - Multi-dimensional noise and fBm visualization tool.
+17. **Logo Vector** - High-fidelity interactive editor and official vector repository for the WowkDigital logo.
 
 ## How to use?
 Simply open `index.html` in any web browser or host the files directly on GitHub Pages.
