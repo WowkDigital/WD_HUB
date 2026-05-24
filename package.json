@@ -1,0 +1,12 @@
+{
+  "name": "wd-hub",
+  "version": "1.1.0",
+  "description": "Central hub for Wowk Digital projects",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "sync-assets": "node scripts/sync-assets.js"
+  },
+  "author": "Wowk Digital & Antigravity",
+  "license": "MIT"
+}

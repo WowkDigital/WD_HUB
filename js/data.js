@@ -205,6 +205,9 @@ const projects = [
         icon: "pen-tool",
         color: "slate-400",
         effect: "hueRotate",
-        imageFolder: "assets/LogoVectorWD"
     }
 ];
+
+if (typeof module !== 'undefined') {
+    module.exports = { assetsManifest, projects };
+}
