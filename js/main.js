@@ -249,12 +249,12 @@ function renderProjects() {
                         
                         <div class="mt-auto flex justify-between items-center">
                             <div class="flex items-center gap-2">
-                                <div class="flex items-center px-4 py-2 rounded-xl text-sm font-bold bg-${project.color}/10 text-${project.color} group-hover:bg-${project.color}/20 transition-all duration-300 border border-${project.color}/20">
-                                    Details <i data-lucide="maximize-2" class="w-3.5 h-3.5 ml-1.5"></i>
-                                </div>
-                                <a href="${project.url}" target="_blank" onclick="event.stopPropagation()" class="flex items-center px-4 py-2 rounded-xl text-sm font-bold bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white transition-all duration-200 border border-white/5 hover:border-white/10">
+                                <a href="${project.url}" target="_blank" onclick="event.stopPropagation()" class="flex items-center px-4 py-2 rounded-xl text-sm font-bold bg-${project.color}/10 text-${project.color} group-hover:bg-${project.color}/20 hover:bg-${project.color} hover:text-white transition-all duration-300 border border-${project.color}/20">
                                     Launch <i data-lucide="external-link" class="w-3.5 h-3.5 ml-1.5"></i>
                                 </a>
+                                <div class="flex items-center px-4 py-2 rounded-xl text-sm font-bold bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white transition-all duration-200 border border-white/5 hover:border-white/10">
+                                    Details <i data-lucide="maximize-2" class="w-3.5 h-3.5 ml-1.5"></i>
+                                </div>
                             </div>
                             <a href="${project.github}" target="_blank" onclick="event.stopPropagation()" class="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all duration-200 border border-white/5 hover:border-white/20" title="View Repository">
                                 <i data-lucide="github" class="w-5 h-5"></i>
