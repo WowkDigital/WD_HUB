@@ -4,22 +4,34 @@
  */
 
 const Effects = {
+    activeCleanups: [],
+
+    cleanup: () => {
+        Effects.activeCleanups.forEach(cb => cb());
+        Effects.activeCleanups = [];
+    },
+
     /**
      * Glitch effect (Glitch Studio style)
      */
     glitch: (element) => {
+        let timeoutId;
         const trigger = () => {
             element.classList.add('glitch-active');
-            setTimeout(() => {
+            timeoutId = setTimeout(() => {
                 element.classList.remove('glitch-active');
             }, 300);
 
             // Random interval between 3 and 10 seconds
-            setTimeout(trigger, Math.random() * 2000 + 2000);
+            timeoutId = setTimeout(trigger, Math.random() * 2000 + 2000);
         };
 
         // Initial delay
-        setTimeout(trigger, Math.random() * 3000 + 1000);
+        timeoutId = setTimeout(trigger, Math.random() * 3000 + 1000);
+
+        Effects.activeCleanups.push(() => {
+            clearTimeout(timeoutId);
+        });
     },
 
     /**
@@ -83,6 +95,11 @@ const Effects = {
         }
 
         const interval = setInterval(draw, 80); // Slower animation (was 50ms)
+
+        Effects.activeCleanups.push(() => {
+            clearInterval(interval);
+            window.removeEventListener('resize', resize);
+        });
     },
 
     /**
@@ -103,14 +120,19 @@ const Effects = {
      * Shake effect (triggered periodically)
      */
     shake: (element) => {
+        let timeoutId;
         const trigger = () => {
             element.classList.add('shake-active');
-            setTimeout(() => {
+            timeoutId = setTimeout(() => {
                 element.classList.remove('shake-active');
             }, 500);
-            setTimeout(trigger, Math.random() * 5000 + 5000);
+            timeoutId = setTimeout(trigger, Math.random() * 5000 + 5000);
         };
-        setTimeout(trigger, 3000);
+        timeoutId = setTimeout(trigger, 3000);
+
+        Effects.activeCleanups.push(() => {
+            clearTimeout(timeoutId);
+        });
     },
 
     /**
@@ -124,9 +146,10 @@ const Effects = {
      * Initialize effects for all cards based on project data
      */
     initAll: (projectData) => {
-        projectData.forEach((project, index) => {
-            if (project.effect && Effects[project.effect]) {
-                const cardId = `project-card-${index}`;
+        projectData.forEach((project) => {
+            const idx = typeof projects !== 'undefined' ? projects.indexOf(project) : -1;
+            if (idx !== -1 && project.effect && Effects[project.effect]) {
+                const cardId = `project-card-${idx}`;
                 const element = document.getElementById(cardId);
                 if (element) {
                     Effects[project.effect](element);
