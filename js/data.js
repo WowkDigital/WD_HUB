@@ -20,6 +20,9 @@ const assetsManifest = {
     "assets/PerlinNoise": [
         "assets/PerlinNoise/preview.png"
     ],
+    "assets/PharmaSignWD": [
+        "assets/PharmaSignWD/preview.png"
+    ],
     "assets/RailwayNetwork": [
         "assets/RailwayNetwork/railway_network.png"
     ],
@@ -205,6 +208,17 @@ const projects = [
         icon: "pen-tool",
         color: "slate-400",
         effect: "hueRotate",
+    },
+    {
+        title: "PHARMA-SIGN",
+        description: "An interactive, premium-grade LED Matrix Simulator specifically tailored for pharmacy cross-shaped displays.",
+        longDescription: "PHARMA-SIGN is an interactive, premium-grade LED Matrix Simulator specifically tailored for pharmacy cross-shaped displays. Designed with a sleek, responsive Tailwind UI, this simulator offers 11 dynamic animation modes (including ECG, Wave, Spiral, Snake, and custom drawings), customizable LED colors, Night Mode, and real-time power consumption diagnostics.",
+        url: "https://wowkdigital.github.io/PharmaSignWD/",
+        github: "https://github.com/WowkDigital/PharmaSignWD",
+        icon: "activity",
+        color: "emerald-500",
+        effect: "hueRotate",
+        imageFolder: "assets/PharmaSignWD"
     }
 ];
 
