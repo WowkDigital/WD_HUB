@@ -17,6 +17,9 @@ const assetsManifest = {
     "assets/LogoVectorWD": [
         "assets/LogoVectorWD/preview.png"
     ],
+    "assets/MemoCard": [
+        "assets/MemoCard/preview.png"
+    ],
     "assets/PerlinNoise": [
         "assets/PerlinNoise/preview.png"
     ],
@@ -233,6 +236,17 @@ const projects = [
         color: "emerald-500",
         effect: "hueRotate",
         imageFolder: "assets/RadioactiveHex"
+    },
+    {
+        title: "MemoCard",
+        description: "A minimalist, responsive progressive web app (PWA) for fast vocabulary learning using Spaced Repetition (SRS) with Firebase.",
+        longDescription: "MemoCard is an interactive, premium-grade flashcard application designed for rapid vocabulary learning. Built with an offline-first architecture, it uses the SuperMemo-2 (SM-2) spaced repetition algorithm to schedule reviews dynamically based on difficulty. Features include a sleek dark glassmorphic user interface, smooth 3D card-flip animations, Google Firebase authentication, cloud Firestore synchronization, CSV/JSON deck import, shared deck cloning, and detailed learning statistics.",
+        url: "https://memocard-79e05.web.app/",
+        github: "https://github.com/WowkDigital/MemoCard",
+        icon: "layers",
+        color: "indigo-500",
+        effect: "hueRotate",
+        imageFolder: "assets/MemoCard"
     }
 ];
 

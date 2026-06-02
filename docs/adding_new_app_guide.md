@@ -4,6 +4,38 @@ Niniejszy dokument opisuje kroki niezbędne do poprawnego zarejestrowania i wdro
 
 ---
 
+## ⚡ Metoda 1: Automatyczna (Zalecana)
+
+Przygotowaliśmy skrypt automatyzujący cały proces (pobieranie informacji z GitHub API, automatyczne uruchomienie przeglądarki headless w celu wykonania zrzutu ekranu z zalogowanym kontem gościa, aktualizacja `js/data.js` oraz odświeżenie pamięci podręcznej statystyk).
+
+### Uruchomienie skryptu:
+
+Wystarczy otworzyć terminal w głównym katalogu `WD_HUB` i uruchomić:
+
+```bash
+python scripts/add_app.py https://github.com/WowkDigital/NazwaRepozytorium
+```
+
+### Opcjonalne flagi:
+- `--url`: Niestandardowy adres wdrożenia (domyślnie skrypt użyje pola `homepage` z GitHuba lub wygeneruje adres GitHub Pages `https://wowkdigital.github.io/NazwaRepozytorium/`).
+- `--icon`: Nazwa ikony z biblioteki Lucide (np. `layers`, `activity`, `globe`, domyślnie: `globe`).
+- `--color`: Klasa koloru Tailwind (np. `indigo-500`, `emerald-500`, domyślnie: `primary`).
+- `--effect`: Efekt najechania hover (np. `hueRotate`, `glitch`, `matrix`, `shake`, `neon`, domyślnie: `hueRotate`).
+- `--title`: Niestandardowy tytuł wyświetlany na karcie (domyślnie pobierany z nazwy repozytorium).
+- `--desc`: Niestandardowy krótki opis (do 1-2 zdań).
+- `--long-desc`: Niestandardowy pełny opis projektu.
+
+**Przykład z opcjami:**
+```bash
+python scripts/add_app.py https://github.com/WowkDigital/MemoCard --icon layers --color indigo-500 --effect hueRotate
+```
+
+Po zakończeniu działania skryptu zrestartuj serwer lub odśwież stronę w przeglądarce, aby załadować nowe dane.
+
+---
+
+## 🛠️ Metoda 2: Ręczna (Krok po kroku)
+
 ## 📋 Schemat działania w 5 krokach
 
 ```mermaid
