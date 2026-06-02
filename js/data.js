@@ -23,6 +23,9 @@ const assetsManifest = {
     "assets/PharmaSignWD": [
         "assets/PharmaSignWD/preview.png"
     ],
+    "assets/RadioactiveHex": [
+        "assets/RadioactiveHex/preview.png"
+    ],
     "assets/RailwayNetwork": [
         "assets/RailwayNetwork/railway_network.png"
     ],
@@ -219,6 +222,17 @@ const projects = [
         color: "emerald-500",
         effect: "hueRotate",
         imageFolder: "assets/PharmaSignWD"
+    },
+    {
+        title: "Radioactive Hex",
+        description: "An advanced, real-time radiation dispersion simulator with a hexagonal axial coordinate system, dynamic wind vectors, and geiger audio feedback.",
+        longDescription: "Radioactive Hex (RadMap-V2) is an interactive, premium-grade radiation dispersion simulator utilizing an axial-coordinate hexagonal grid system. It models physical decay, real-time diffusion, and environmental wind vector drift. Users can paint radioactive contamination, select isotope presets (Iodine-131, Cesium-137, Cobalt-60, Plutonium-239), simulate continuous leaks or blast releases, and analyze dynamic metrics with a real-time historical timeline chart and spatial audio Geiger acoustics.",
+        url: "https://wowkdigital.github.io/RadioactiveHexWD/",
+        github: "https://github.com/WowkDigital/RadioactiveHexWD",
+        icon: "radio",
+        color: "emerald-500",
+        effect: "hueRotate",
+        imageFolder: "assets/RadioactiveHex"
     }
 ];
 
