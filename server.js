@@ -110,10 +110,13 @@ const MIME_TYPES = {
 
 const server = http.createServer(async (req, res) => {
     // API endpoint for GitHub stats
-    if (req.url === '/api/github-stats' && req.method === 'GET') {
+    if (req.url.startsWith('/api/github-stats') && req.method === 'GET') {
         res.writeHead(200, { 
             'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
+            'Access-Control-Allow-Origin': '*',
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
         });
         
         // If cache is empty or older than 24 hours, trigger refresh

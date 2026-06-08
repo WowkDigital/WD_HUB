@@ -38,10 +38,14 @@ async function fetchGitHubStats() {
 
     // 1. Try to fetch from local backend server first
     try {
-        const response = await fetch('/api/github-stats');
+        const response = await fetch('/api/github-stats?t=' + Date.now());
         if (response.ok) {
             const data = await response.json();
             console.log('Successfully loaded GitHub stats from server.');
+            localStorage.setItem(cacheKey, JSON.stringify({
+                timestamp: Date.now(),
+                data: data
+            }));
             updateProjectDates(data);
             return;
         }
