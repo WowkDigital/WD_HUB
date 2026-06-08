@@ -57,7 +57,7 @@ def main():
     repo_data = get_repo_details(owner, repo_name)
     
     title = args.title or repo_name
-    github_description = repo_data.get('description', '') if repo_data else ''
+    github_description = (repo_data.get('description') or '') if repo_data else ''
     
     # Clean up description
     short_desc = args.desc or (github_description[:100] + '...' if len(github_description) > 100 else github_description) or "A Wowk Digital project."

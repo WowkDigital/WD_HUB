@@ -7,6 +7,9 @@ const assetsManifest = {
         "assets/ARW_Toolkit/ARW_Toolkit_a1.png",
         "assets/ARW_Toolkit/ARW_Toolkit_a2.png"
     ],
+    "assets/Backrooms_3D": [
+        "assets/Backrooms_3D/preview.png"
+    ],
     "assets/ChainReactionWD": [
         "assets/ChainReactionWD/preview.png"
     ],
@@ -261,6 +264,17 @@ const projects = [
         color: "amber-500",
         effect: "hueRotate",
         imageFolder: "assets/ChainReactionWD"
+    },
+    {
+        title: "Backrooms 3D",
+        description: "Explore the endless hallways of the Backrooms in an immersive 3D simulation built with Three.js.",
+        longDescription: "Backrooms 3D is an immersive first-person 3D simulator of the infamous 'Backrooms' creepypasta. Built with Three.js and HTML5 Canvas, it features procedurally generated infinite mazes, realistic retro VHS shader glitch effects, eerie ambient audio, dynamic lighting, and an autonomous bot navigation mode for hands-free maze exploration and mapping.",
+        url: "https://wowkdigital.github.io/Backrooms_3D/",
+        github: "https://github.com/WowkDigital/Backrooms_3D",
+        icon: "ghost",
+        color: "yellow-500",
+        effect: "glitch",
+        imageFolder: "assets/Backrooms_3D"
     }
 ];
 
