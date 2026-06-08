@@ -7,6 +7,9 @@ const assetsManifest = {
         "assets/ARW_Toolkit/ARW_Toolkit_a1.png",
         "assets/ARW_Toolkit/ARW_Toolkit_a2.png"
     ],
+    "assets/ChainReactionWD": [
+        "assets/ChainReactionWD/preview.png"
+    ],
     "assets/GlitchStudio": [
         "assets/GlitchStudio/Glitch Studio (1).png",
         "assets/GlitchStudio/Glitch Studio (2).png"
@@ -247,6 +250,17 @@ const projects = [
         color: "indigo-500",
         effect: "hueRotate",
         imageFolder: "assets/MemoCard"
+    },
+    {
+        title: "Quantum Chain Reaction",
+        description: "An interactive, high-performance quantum particle and chain reaction simulation built with HTML5 Canvas.",
+        longDescription: "Quantum Chain Reaction is an interactive physics simulation exploring particle collisions, dynamic speed scaling, and molecular combinations. Built with a custom physics engine and HTML5 Canvas, it features a glassmorphic real-time telemetry dashboard, discovery charts, and organic visuals.",
+        url: "https://wowkdigital.github.io/ChainReactionWD/",
+        github: "https://github.com/WowkDigital/ChainReactionWD",
+        icon: "atom",
+        color: "amber-500",
+        effect: "hueRotate",
+        imageFolder: "assets/ChainReactionWD"
     }
 ];
 
