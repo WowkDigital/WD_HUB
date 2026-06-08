@@ -38,6 +38,9 @@ const assetsManifest = {
     "assets/RailwayNetwork": [
         "assets/RailwayNetwork/railway_network.png"
     ],
+    "assets/RegExWD": [
+        "assets/RegExWD/preview.png"
+    ],
     "assets/TextLab": [
         "assets/TextLab/TextLab.png"
     ],
@@ -275,6 +278,17 @@ const projects = [
         color: "yellow-500",
         effect: "glitch",
         imageFolder: "assets/Backrooms_3D"
+    },
+    {
+        title: "RegEx Lab",
+        description: "An interactive, premium-grade regular expressions laboratory for learning, testing, and mastering regex patterns in real-time.",
+        longDescription: "RegEx Lab is an interactive learning platform and testing playground for regular expressions. Built with a premium glassmorphic UI, it features structured lessons with multiple exercises per lesson, real-time match highlighting, instant test suite validation, an interactive cheatsheet, and persistent progress tracking.",
+        url: "https://wowkdigital.github.io/RegExWD/",
+        github: "https://github.com/WowkDigital/RegExWD",
+        icon: "braces",
+        color: "fuchsia-500",
+        effect: "glitch",
+        imageFolder: "assets/RegExWD"
     }
 ];
 
