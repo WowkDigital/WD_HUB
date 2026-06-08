@@ -38,6 +38,9 @@ const assetsManifest = {
     "assets/RailwayNetwork": [
         "assets/RailwayNetwork/railway_network.png"
     ],
+    "assets/RegExLabWD": [
+        "assets/RegExLabWD/preview.png"
+    ],
     "assets/RegExWD": [
         "assets/RegExWD/preview.png"
     ],
@@ -289,6 +292,17 @@ const projects = [
         color: "fuchsia-500",
         effect: "glitch",
         imageFolder: "assets/RegExWD"
+    },
+    {
+        title: "RegEx Lab v2",
+        description: "A modern, interactive regular expressions playground and learning platform with real-time validation, hints, and progressive lessons.",
+        longDescription: "RegEx Lab v2 is an interactive learning platform and testing environment for mastering regular expressions. Built with a responsive dark-mode UI with neon accents, it offers 12 structured lessons ranging from Beginner to Expert levels, real-time exercise validation, progress tracking saved locally, and a fully featured playground with built-in templates and regex cheatsheet.",
+        url: "https://wowkdigital.github.io/RegExLabWD/",
+        github: "https://github.com/WowkDigital/RegExLabWD",
+        icon: "braces",
+        color: "indigo-500",
+        effect: "neon",
+        imageFolder: "assets/RegExLabWD"
     }
 ];
 
