@@ -23,6 +23,9 @@ const assetsManifest = {
     "assets/LogoVectorWD": [
         "assets/LogoVectorWD/preview.png"
     ],
+    "assets/MemeBattleWD": [
+        "assets/MemeBattleWD/preview.png"
+    ],
     "assets/MemoCard": [
         "assets/MemoCard/preview.png"
     ],
@@ -303,6 +306,17 @@ const projects = [
         color: "indigo-500",
         effect: "neon",
         imageFolder: "assets/RegExLabWD"
+    },
+    {
+        title: "Meme Battle WD",
+        description: "An interactive ELO-based meme voting application to find, rank, and view statistics for the funniest memes.",
+        longDescription: "Meme Battle WD is a dynamic web application allowing users to vote on pairs of memes using the ELO rating system. It features admin-secured image uploads, Cloudflare R2 storage integration, real-time leaderboards, and detailed voting statistics.",
+        url: "https://meme.wowkdigitalx.pl/",
+        github: "https://github.com/WowkDigital/MemeBattleWD",
+        icon: "globe",
+        color: "purple-500",
+        effect: "neon",
+        imageFolder: "assets/MemeBattleWD"
     }
 ];
 

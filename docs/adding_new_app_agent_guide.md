@@ -13,6 +13,10 @@ Zarejestrować nową aplikację w plikach konfiguracyjnych WD HUB (`js/data.js`)
 
 Agent powinien dążyć do wykonania zadania za pomocą skryptu automatycznego, a w razie problemów (np. brak zależności środowiskowych dla Selenium) płynnie przejść do procedury manualnej.
 
+> [!NOTE]
+> Jeśli dodawana aplikacja posiada kod źródłowy na GitHubie, lecz jej wersja produkcyjna działa na własnej, dedykowanej domenie (np. `meme.wowkdigitalx.pl`), skorzystaj z osobnej instrukcji: [adding_custom_domain_app_guide.md](adding_custom_domain_app_guide.md).
+
+
 ### Krok 1: Wykorzystanie skryptu automatyzującego (Zalecane)
 
 Uruchom skrypt `scripts/add_app.py` za pomocą powłoki systemowej (PowerShell / CMD). Skrypt ten pobiera dane z API GitHub, próbuje wykonać zrzut ekranu za pomocą Selenium, aktualizuje manifest zasobów oraz rejestruje nową aplikację w `js/data.js`.
