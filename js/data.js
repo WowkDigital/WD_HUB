@@ -13,6 +13,9 @@ const assetsManifest = {
     "assets/ChainReactionWD": [
         "assets/ChainReactionWD/preview.png"
     ],
+    "assets/FFMPEG_GEN_WD": [
+        "assets/FFMPEG_GEN_WD/preview.png"
+    ],
     "assets/GlitchStudio": [
         "assets/GlitchStudio/Glitch Studio (1).png",
         "assets/GlitchStudio/Glitch Studio (2).png"
@@ -317,6 +320,17 @@ const projects = [
         color: "purple-500",
         effect: "neon",
         imageFolder: "assets/MemeBattleWD"
+    },
+    {
+        title: "FFmpeg Script Generator",
+        description: "An intuitive web tool to visually generate complex FFmpeg commands and scripts for video and audio processing.",
+        longDescription: "FFmpeg Script Generator is an interactive dashboard that simplifies creation of complex FFmpeg commands and automation scripts. It supports video/audio parameter tuning, filters, formats, and generates ready-to-run Shell, PowerShell (with optional visual progress bar), or Batch scripts to process media efficiently.",
+        url: "https://wowkdigital.github.io/FFMPEG_GEN_WD/",
+        github: "https://github.com/WowkDigital/FFMPEG_GEN_WD",
+        icon: "video",
+        color: "red-500",
+        effect: "hueRotate",
+        imageFolder: "assets/FFMPEG_GEN_WD"
     }
 ];
 
