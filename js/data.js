@@ -13,6 +13,9 @@ const assetsManifest = {
     "assets/ChainReactionWD": [
         "assets/ChainReactionWD/preview.png"
     ],
+    "assets/Clipboard_WD": [
+        "assets/Clipboard_WD/preview.png"
+    ],
     "assets/FFMPEG_GEN_WD": [
         "assets/FFMPEG_GEN_WD/preview.png"
     ],
@@ -331,6 +334,17 @@ const projects = [
         color: "red-500",
         effect: "hueRotate",
         imageFolder: "assets/FFMPEG_GEN_WD"
+    },
+    {
+        title: "VOID://CLIPBOARD",
+        description: "A secure, end-to-end encrypted real-time clipboard with zero-knowledge architecture and auto-expiring sessions.",
+        longDescription: "VOID://CLIPBOARD is a premium, zero-knowledge private clipboard featuring end-to-end encryption (AES-GCM) performed entirely in the browser. The decryption key remains securely in the URL fragment (#hash) and is never transmitted to the server. Supporting both secure text synchronization and encrypted file sharing with a 30-minute time-to-live (TTL), it provides an ultra-secure and private way to transfer sensitive data between devices.",
+        url: "https://wowkdigital.dkonto.pl/Clipboard_WD/",
+        github: "https://github.com/WowkDigital/Clipboard_WD",
+        icon: "clipboard",
+        color: "blue-500",
+        effect: "neon",
+        imageFolder: "assets/Clipboard_WD"
     }
 ];
 
