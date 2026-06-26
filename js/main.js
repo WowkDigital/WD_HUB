@@ -61,8 +61,12 @@ async function fetchGitHubStats() {
             const parsed = JSON.parse(cached);
             cachedData = parsed.data;
             const age = Date.now() - parsed.timestamp;
+            
+            // Check if there are any new projects not present in the cache
+            const hasNewProjects = projects.some(project => project.github && (!cachedData || !cachedData[project.github]));
+            
             // 24 hours cache
-            if (age < 24 * 60 * 60 * 1000 && Object.keys(parsed.data).length > 0) {
+            if (age < 24 * 60 * 60 * 1000 && Object.keys(parsed.data).length > 0 && !hasNewProjects) {
                 console.log('Using cached GitHub stats from localStorage.');
                 updateProjectDates(parsed.data);
                 return;

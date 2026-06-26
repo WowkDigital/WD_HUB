@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "sync-assets": "node scripts/sync-assets.js"
+    "sync-assets": "node scripts/sync-assets.js",
+    "update-stats": "node scripts/update-stats.js"
   },
   "author": "Wowk Digital & Antigravity",
   "license": "MIT"

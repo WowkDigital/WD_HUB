@@ -119,11 +119,18 @@ const server = http.createServer(async (req, res) => {
             'Expires': '0'
         });
         
-        // If cache is empty or older than 24 hours, trigger refresh
+        const cacheFileExists = fs.existsSync(CACHE_FILE);
+        
+        // Check if there are any new projects not in cache
+        delete require.cache[require.resolve('./js/data.js')];
+        const { projects } = require('./js/data.js');
+        const hasNewProjects = projects.some(project => project.github && !githubCache.data[project.github]);
+        
+        // If cache is empty, older than 24 hours, cache file is missing on disk, or has new projects, trigger refresh
         const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
-        if (githubCache.timestamp < oneDayAgo || Object.keys(githubCache.data).length === 0) {
-            if (Object.keys(githubCache.data).length === 0) {
-                // If cache is completely empty, wait for fetch
+        if (githubCache.timestamp < oneDayAgo || Object.keys(githubCache.data).length === 0 || !cacheFileExists || hasNewProjects) {
+            if (Object.keys(githubCache.data).length === 0 || !cacheFileExists || hasNewProjects) {
+                // If cache is completely empty, file is missing, or we have new projects, wait for fetch
                 await refreshCache();
             } else {
                 // Otherwise refresh in background and serve stale cache immediately
