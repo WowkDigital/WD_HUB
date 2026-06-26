@@ -1,3 +1,5 @@
+// npm run update-stats
+
 const fs = require('fs');
 const path = require('path');
 
@@ -12,7 +14,7 @@ async function fetchRepoStats(owner, repo, token) {
     if (token) {
         headers['Authorization'] = `token ${token}`;
     }
-    
+
     try {
         const response = await fetch(url, { headers });
         if (!response.ok) {
@@ -37,13 +39,13 @@ async function run() {
         console.error(`[ERROR] Data file not found at: ${DATA_FILE}`);
         process.exit(1);
     }
-    
+
     const { projects } = require(DATA_FILE);
     if (!projects || !Array.isArray(projects)) {
         console.error('[ERROR] Invalid projects structure in data.js');
         process.exit(1);
     }
-    
+
     // Load existing cache if exists to keep on failure
     let existingCache = { data: {} };
     if (fs.existsSync(CACHE_FILE)) {
@@ -53,30 +55,30 @@ async function run() {
             // Ignore parse errors
         }
     }
-    
+
     const token = process.env.GITHUB_TOKEN;
     if (!token) {
         console.log('[WARN] No GITHUB_TOKEN environment variable found. Rate limits may apply.');
     } else {
         console.log('[INFO] Using GitHub Token for authenticated API calls.');
     }
-    
+
     const newData = {};
     console.log(`Starting update for ${projects.length} projects...`);
-    
+
     for (let i = 0; i < projects.length; i++) {
         const project = projects[i];
         if (!project.github) {
-            console.log(`[INFO] [${i+1}/${projects.length}] Skipping "${project.title}" (no GitHub URL)`);
+            console.log(`[INFO] [${i + 1}/${projects.length}] Skipping "${project.title}" (no GitHub URL)`);
             continue;
         }
-        
+
         const match = project.github.match(/github\.com\/([^\/]+)\/([^\/]+)/);
         if (match) {
             const owner = match[1];
             const repo = match[2].replace(/.git$/, '');
-            console.log(`[FETCH] [${i+1}/${projects.length}] Fetching stats for ${owner}/${repo}...`);
-            
+            console.log(`[FETCH] [${i + 1}/${projects.length}] Fetching stats for ${owner}/${repo}...`);
+
             const stats = await fetchRepoStats(owner, repo, token);
             if (stats) {
                 newData[project.github] = stats;
@@ -87,19 +89,19 @@ async function run() {
             } else {
                 console.log(`   [FAIL] Failed to get stats.`);
             }
-            
+
             // Sleep 500ms to avoid hitting rate limit
             await new Promise(resolve => setTimeout(resolve, 500));
         } else {
-            console.log(`[WARN] [${i+1}/${projects.length}] Invalid GitHub URL format: ${project.github}`);
+            console.log(`[WARN] [${i + 1}/${projects.length}] Invalid GitHub URL format: ${project.github}`);
         }
     }
-    
+
     const finalCache = {
         timestamp: Date.now(),
         data: newData
     };
-    
+
     fs.writeFileSync(CACHE_FILE, JSON.stringify(finalCache, null, 2), 'utf8');
     console.log(`\nStats update completed! Saved to ${CACHE_FILE}`);
 }
