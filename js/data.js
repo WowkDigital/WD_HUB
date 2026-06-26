@@ -56,6 +56,9 @@ const assetsManifest = {
     "assets/TextLab": [
         "assets/TextLab/TextLab.png"
     ],
+    "assets/train_game_WD": [
+        "assets/train_game_WD/preview.png"
+    ],
     "assets/TransmutationCircle": [
         "assets/TransmutationCircle/tc_1.png",
         "assets/TransmutationCircle/tc_2.png"
@@ -345,6 +348,17 @@ const projects = [
         color: "blue-500",
         effect: "neon",
         imageFolder: "assets/Clipboard_WD"
+    },
+    {
+        title: "Train Game WD",
+        description: "An advanced, real-time procedural train game and simulation with dynamic track networks and interactive locomotives.",
+        longDescription: "Train Game WD is a sophisticated simulation game built with Vanilla JavaScript and HTML5 Canvas. It features advanced train physics, procedurally generated or custom layouts, and a real-time control system. Users can build their own rail networks, manage multiple trains, adjust switch paths, and observe smooth physics-based movement.",
+        url: "https://wowkdigital.github.io/train_game_WD/",
+        github: "https://github.com/WowkDigital/train_game_WD",
+        icon: "train",
+        color: "blue-500",
+        effect: "hueRotate",
+        imageFolder: "assets/train_game_WD"
     }
 ];
 
