@@ -26,6 +26,9 @@ const assetsManifest = {
     "assets/GravitySimulator": [
         "assets/GravitySimulator/preview.png"
     ],
+    "assets/LiminalOS": [
+        "assets/LiminalOS/preview.png"
+    ],
     "assets/LogoVectorWD": [
         "assets/LogoVectorWD/preview.png"
     ],
@@ -359,6 +362,17 @@ const projects = [
         color: "blue-500",
         effect: "hueRotate",
         imageFolder: "assets/train_game_WD"
+    },
+    {
+        title: "Liminal OS",
+        description: "A vanilla JS adventure game set in the Backrooms. Survive the liminal space.",
+        longDescription: "Liminal OS is an interactive adventure game set in the unsettling, infinite hallways of the Backrooms. Navigate the eerie corridors, manage your sanity, and survive the anomalies of the liminal space using a retro CRT terminal interface.",
+        url: "https://wowkdigital.dkonto.pl/LiminalOS/",
+        github: "https://github.com/WowkDigital/LiminalOS",
+        icon: "terminal",
+        color: "amber-500",
+        effect: "glitch",
+        imageFolder: "assets/LiminalOS"
     }
 ];
 
