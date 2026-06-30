@@ -32,6 +32,9 @@ const assetsManifest = {
     "assets/LogoVectorWD": [
         "assets/LogoVectorWD/preview.png"
     ],
+    "assets/map_hex": [
+        "assets/map_hex/preview.png"
+    ],
     "assets/MemeBattleWD": [
         "assets/MemeBattleWD/preview.png"
     ],
@@ -373,6 +376,17 @@ const projects = [
         color: "amber-500",
         effect: "glitch",
         imageFolder: "assets/LiminalOS"
+    },
+    {
+        title: "map_hex",
+        description: "A Wowk Digital project.",
+        longDescription: "An interactive web application developed by Wowk Digital.",
+        url: "https://wowkdigital.dkonto.pl/ftp/map_hex/",
+        github: "https://github.com/WowkDigital/map_hex",
+        icon: "hexagon",
+        color: "rose-500",
+        effect: "neon",
+        imageFolder: "assets/map_hex"
     }
 ];
 
