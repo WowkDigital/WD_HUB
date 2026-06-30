@@ -1,109 +1,135 @@
-# 🤖 Instrukcja dla Agenta AI: Autonomiczne dodawanie nowej karty aplikacji do WD HUB
+# 🤖 Uniwersalna Instrukcja dla Agenta AI: Rejestracja nowej aplikacji w WD HUB
 
-Niniejszy dokument jest przeznaczony dla autonomicznych agentów AI. Zawiera precyzyjne kroki, oczekiwane komendy, procedury obsługi błędów oraz wytyczne walidacji niezbędne do dodania nowej karty projektu/aplikacji w panelu **WD HUB**.
-
----
-
-## 🎯 Cel
-Zarejestrować nową aplikację w plikach konfiguracyjnych WD HUB (`js/data.js`), wygenerować lub dostarczyć odpowiedni zrzut ekranu (preview) do folderu `assets/` oraz upewnić się, że statystyki GitHub są prawidłowo pobierane i wyświetlane.
+Niniejszy dokument stanowi jedyną, kompletną i uniwersalną instrukcję dla agentów AI dotyczącą dodawania nowych aplikacji/kart projektów do panelu **WD HUB**.
 
 ---
 
-## 🛠️ Procedura dodawania aplikacji
+## 🧭 Analiza Danych Wejściowych (Rozróżnienie Typu Wdrożenia)
 
-Agent powinien dążyć do wykonania zadania za pomocą skryptu automatycznego, a w razie problemów (np. brak zależności środowiskowych dla Selenium) płynnie przejść do procedury manualnej.
+Agent musi przeanalizować dane wejściowe dostarczone przez użytkownika w celu ustalenia lokalizacji wdrożenia (adresu produkcyjnego strony):
 
-> [!NOTE]
-> Jeśli dodawana aplikacja posiada kod źródłowy na GitHubie, lecz jej wersja produkcyjna działa na własnej, dedykowanej domenie (np. `meme.wowkdigitalx.pl`), skorzystaj z osobnej instrukcji: [adding_custom_domain_app_guide.md](adding_custom_domain_app_guide.md).
+1. **SCENARIUSZ A: Podano tylko link do repozytorium GitHub**
+   - *Przykład:* `https://github.com/WowkDigital/MemoCard`
+   - *Lokalizacja strony (URL wdrożenia):* Domyślne GitHub Pages o formacie:
+     `https://wowkdigital.github.io/<NazwaRepozytorium>/` (np. `https://wowkdigital.github.io/MemoCard/`).
 
+2. **SCENARIUSZ B: Podano link do GitHub oraz dodatkowy link zewnętrzny (spoza GitHub)**
+   - *Przykład:* GitHub: `https://github.com/WowkDigital/MemeBattleWD`, Zewnętrzny: `meme.wowkdigitalx.pl` lub `https://wowkdigital.dkonto.pl/ftp/map_hex/`
+   - *Lokalizacja strony (URL wdrożenia):* Dostarczony dodatkowy adres zewnętrzny.
+   - > [!IMPORTANT]
+     > Upewnij się, że adres wdrożenia posiada pełny protokół (np. `https://meme.wowkdigitalx.pl/`). Jeśli podano surową domenę `meme.wowkdigitalx.pl`, przed użyciem w skrypcie/konfiguracji dodaj do niej protokół `https://` oraz końcowy ukośnik `/`.
 
-### Krok 1: Wykorzystanie skryptu automatyzującego (Zalecane)
+---
 
-Uruchom skrypt `scripts/add_app.py` za pomocą powłoki systemowej (PowerShell / CMD). Skrypt ten pobiera dane z API GitHub, próbuje wykonać zrzut ekranu za pomocą Selenium, aktualizuje manifest zasobów oraz rejestruje nową aplikację w `js/data.js`.
+## ⚡ Metoda 1: Automatyczna przy użyciu skryptu (Zalecana)
 
-**Format komendy:**
+Głównym sposobem dodawania aplikacji jest uruchomienie skryptu `scripts/add_app.py`. Skrypt ten automatycznie odpytuje GitHub API, wykonuje screenshot strony za pomocą Selenium, aktualizuje manifest zasobów w `js/data.js` oraz rejestruje nową aplikację.
+
+### Uruchomienie skryptu w zależności od scenariusza:
+
+* **Dla Scenariusza A (Tylko GitHub Pages):**
+  ```powershell
+  python scripts/add_app.py https://github.com/WowkDigital/<NazwaRepozytorium> [opcje_stylu]
+  ```
+  *Przykład:*
+  ```powershell
+  python scripts/add_app.py https://github.com/WowkDigital/MemoCard --icon layers --color indigo-500 --effect hueRotate
+  ```
+
+* **Dla Scenariusza B (Wdrożenie na własnej domenie / zewnętrznym URL):**
+  ```powershell
+  python scripts/add_app.py https://github.com/WowkDigital/<NazwaRepozytorium> --url https://<Zewnetrzny_Adres_Aplikacji>/ [opcje_stylu]
+  ```
+  *Przykład:*
+  ```powershell
+  python scripts/add_app.py https://github.com/WowkDigital/MemeBattleWD --url https://meme.wowkdigitalx.pl/ --icon globe --color purple-500 --effect neon
+  ```
+
+### Opcje stylu i konfiguracji (`[opcje_stylu]`):
+- `--icon`: Identyfikator ikony z Lucide Icons (np. `layers`, `atom`, `globe`, `activity`, `orbit`, `waves`, `train`, `pen-tool`). Domyślnie: `globe`.
+- `--color`: Klasa koloru Tailwind CSS dla obramowań i akcentów (np. `indigo-500`, `emerald-500`, `amber-500`, `purple-500`, `pink-500`, `sky-400`). Domyślnie: `primary`.
+- `--effect`: Efekt najechania hover na kartę (do wyboru: `hueRotate`, `glitch`, `matrix`, `shake`, `neon`; domyślnie: `hueRotate`).
+- `--title`: Niestandardowy tytuł karty (domyślnie pobierany z nazwy repozytorium GitHub).
+- `--desc`: Krótki opis wyświetlany bezpośrednio na karcie (maksymalnie 1-2 zdania, do 120 znaków).
+- `--long-desc`: Pełny, szczegółowy opis wyświetlany w oknie modalnym (szczegóły technologii itp.).
+
+---
+
+## 🛠️ Metoda 2: Procedura ręczna (Fallback)
+
+Jeśli automatyczny skrypt zgłosi błąd (np. błąd Selenium, brak zainstalowanego WebDrivera/Chrome, błędy sieciowe), wykonaj poniższe kroki ręcznie:
+
+### Krok 1: Struktura folderów i zrzut ekranu (Preview Image)
+1. Utwórz folder dla zasobów aplikacji w katalogu `assets/` o nazwie tożsamej z nazwą repozytorium:
+   ```powershell
+   mkdir "assets/<NazwaRepozytorium>"
+   ```
+2. Pozyskaj zrzut ekranu aplikacji (preferowany ciemny motyw, proporcje 16:9, rozdzielczość minimum 1280x720):
+   - Użyj narzędzia `browser_subagent` w przeglądarce pod adresem aplikacji (w zależności od scenariusza: GitHub Pages lub adres zewnętrzny).
+   - Zrób zrzut ekranu całej strony lub jej głównego widoku.
+   - Zapisz go jako `preview.png` w nowo utworzonym folderze (np. `assets/<NazwaRepozytorium>/preview.png`).
+   - W przypadku krytycznych problemów z dostępem wygeneruj lub wgraj estetyczny obrazek zastępczy o premium wyglądzie w tym samym formacie.
+
+### Krok 2: Uruchomienie synchronizacji zasobów
+WD HUB korzysta z automatycznie wygenerowanego manifestu plików graficznych w `js/data.js`. Aby zarejestrować nowo dodany plik `preview.png`:
 ```powershell
-python scripts/add_app.py <URL_Repozytorium_GitHub> [opcje]
+node scripts/sync-assets.js
 ```
 
-**Dostępne parametry:**
-- `<URL_Repozytorium_GitHub>`: Adres url repozytorium (np. `https://github.com/WowkDigital/MemoCard`) - **wymagany**.
-- `--url`: Niestandardowy adres wdrożenia (jeśli różni się od GitHub Pages / pola `homepage` w repozytorium).
-- `--icon`: Nazwa ikony z biblioteki Lucide Icons (np. `layers`, `atom`, `activity`, `globe`, `orbit`, `waves`).
-- `--color`: Klasa koloru Tailwind (np. `indigo-500`, `emerald-500`, `amber-500`, `purple-500`, `slate-400`).
-- `--effect`: Efekt najechania hover (do wyboru: `hueRotate`, `glitch`, `matrix`, `shake`, `neon`, domyślnie: `hueRotate`).
-- `--title`: Niestandardowy tytuł karty.
-- `--desc`: Krótki opis (do 1-2 zdań, max 100-120 znaków).
-- `--long-desc`: Pełny opis wyświetlany w oknie modalnym.
+### Krok 3: Rejestracja konfiguracji w `js/data.js`
+Otwórz plik `js/data.js` i ręcznie dopisz obiekt nowej aplikacji na końcu tablicy `projects`.
 
-**Przykład:**
-```powershell
-python scripts/add_app.py https://github.com/WowkDigital/MemoCard --icon layers --color indigo-500 --effect hueRotate
+**Wzór obiektu konfiguracji:**
+```javascript
+    {
+        title: "Tytuł Aplikacji", // np. "MemoCard" lub "Meme Battle WD"
+        description: "Krótki opis na karcie (1-2 zdania, do 120 znaków).",
+        longDescription: "Długi i szczegółowy opis projektu wyświetlany w oknie modalnym.",
+        url: "https://wowkdigital.github.io/MemoCard/", // URL wdrożenia (Scenariusz A lub B) - zawsze zakończony ukośnikiem '/'
+        github: "https://github.com/WowkDigital/MemoCard", // URL repozytorium na GitHubie
+        icon: "layers", // Nazwa ikony Lucide Icons
+        color: "indigo-500", // Kolor wiodący Tailwind CSS
+        effect: "hueRotate", // Efekt hover ('hueRotate', 'glitch', 'matrix', 'shake', 'neon')
+        imageFolder: "assets/MemoCard" // Ścieżka do folderu z plikiem preview.png (musi odpowiadać kluczowi z assetsManifest)
+    }
 ```
 
 ---
 
-### Krok 2: Obsługa awarii środowiska Selenium (Fallback)
+## 🔄 Zarządzanie Pamięcią Podręczną (Cache) i Serwerem
 
-Skrypt `add_app.py` wymaga zainstalowanego pakietu `selenium` oraz zainstalowanej przeglądarki Chrome z odpowiednim WebDriverem. Jeśli podczas wykonywania skryptu napotkasz błąd typu `ModuleNotFoundError: No module named 'selenium'` lub błąd powiązany z WebDriverem Chrome, wykonaj następujące kroki:
+Aby nowo dodana aplikacja natychmiast posiadała daty utworzenia i aktualizacji bez oczekiwania na odświeżenie API (oraz w celu uniknięcia limitów zapytań GitHub API):
 
-1. **Ręczne utworzenie folderu zasobów:**
-   Stwórz folder w katalogu `assets/` o nazwie odpowiadającej nazwie repozytorium (np. `assets/MemoCard`).
-2. **Pozyskanie zrzutu ekranu:**
-   - Jeśli posiadasz narzędzie przeglądarki (`browser_subagent`), otwórz docelowy adres URL aplikacji, zrób zrzut ekranu całej strony lub jej kluczowego widoku, a następnie zapisz go jako `preview.png` w nowo utworzonym folderze (np. `assets/MemoCard/preview.png`).
-   - W przypadku braku możliwości wykonania screenshotu, wygeneruj lub skopiuj estetyczny obraz zastępczy (np. o wymiarach 16:9 w ciemnej kolorystyce) i zapisz go jako `preview.png`.
-3. **Uruchomienie synchronizacji manifestu zasobów:**
-   Wpis do manifestu (`assetsManifest` w `js/data.js`) musi zostać zaktualizowany. Uruchom skrypt synchronizujący za pomocą Node.js:
-   ```powershell
-   node scripts/sync-assets.js
-   ```
-4. **Ręczna edycja pliku `js/data.js`:**
-   Otwórz plik `js/data.js` i dodaj obiekt reprezentujący nową aplikację na końcu tablicy `projects`.
-   
-   **Format obiektu:**
-   ```javascript
-   {
-       title: "Nazwa Aplikacji",
-       description: "Krótki, dynamiczny opis wyświetlany na karcie (1-2 zdania).",
-       longDescription: "Szczegółowy opis projektu, jego kluczowych funkcjonalności oraz technologii użytych do budowy. Ten opis wyświetli się w oknie modalnym.",
-       url: "https://wowkdigital.github.io/NazwaRepozytorium/",
-       github: "https://github.com/WowkDigital/NazwaRepozytorium",
-       icon: "activity", // Identyfikator ikony z Lucide Icons
-       color: "emerald-500", // Klasa koloru Tailwind CSS
-       effect: "hueRotate", // Efekt hover ('hueRotate', 'glitch', 'matrix', 'shake', 'neon' lub brak)
-       imageFolder: "assets/NazwaRepozytorium" // Dokładna ścieżka do folderu z preview.png
-   }
+1. **W przypadku metody automatycznej:**
+   Skrypt `add_app.py` sam modyfikuje plik `github-stats-cache.json` dodając dane nowego projektu. **NIGDY nie usuwaj pliku `github-stats-cache.json`**, gdyż wymusi to na serwerze ponowne pobranie danych dla wszystkich projektów, co skutkuje zablokowaniem zapytań (403 Rate Limit Exceeded) i pustymi wartościami "N/A".
+
+2. **W przypadku metody ręcznej:**
+   Otwórz plik `github-stats-cache.json` i dopisz do obiektu `data` klucz z adresem repozytorium oraz statystykami (lub aktualną datą w formacie ISO w razie braku danych):
+   ```json
+       "https://github.com/WowkDigital/NazwaRepozytorium": {
+         "created_at": "2026-06-30T12:00:00Z",
+         "pushed_at": "2026-06-30T12:00:00Z",
+         "updated_at": "2026-06-30T12:00:00Z"
+       }
    ```
 
----
-
-### Krok 3: Czyszczenie pamięci podręcznej i restart serwera
-
-Aby dane statystyk GitHub (data utworzenia i ostatniej aktualizacji) zostały natychmiastowo pobrane z API i przypisane do nowej karty, należy zresetować cache.
-
-1. **Usuń plik pamięci podręcznej:**
-   ```powershell
-   Remove-Item -Path "github-stats-cache.json" -ErrorAction SilentlyContinue
-   ```
-2. **Zrestartuj serwer backendowy (Node.js):**
-   Jeśli serwer `server.js` jest uruchomiony w tle, zrestartuj go. Jeśli nie jest uruchomiony, uruchom go ponownie za pomocą:
+3. **Zrestartuj serwer backendowy Node.js:**
+   Zatrzymaj aktualnie działający proces serwera i uruchom go ponownie w głównym katalogu `WD_HUB`:
    ```powershell
    node server.js
    ```
-   Serwer przy starcie zauważy brak pliku `github-stats-cache.json`, wyśle nowe żądania do API GitHub i wygeneruje aktualny cache zawierający statystyki dla wszystkich zarejestrowanych projektów.
 
 ---
 
-## 🔍 Kryteria Weryfikacji (Checklista dla Agenta)
+## 🔍 Kryteria Weryfikacji (Checklista Walidacyjna dla Agenta)
 
-Po dokonaniu zmian wykonaj poniższą walidację (wykorzystaj do tego `browser_subagent` lub testy integracyjne):
+Po zakończeniu procedury weryfikuj działanie panelu, przechodząc pod adres lokalny `http://localhost:3000/`:
 
-1. [ ] **Poprawność składniowa JS:** Plik `js/data.js` nie posiada błędów składniowych i poprawnie eksportuje tablicę `projects` oraz obiekt `assetsManifest`.
-2. [ ] **Karta na Dashboardzie:** Nowy projekt pojawia się zarówno w sekcji "Featured Projects", jak i w "A-Z Gallery" na stronie głównej `http://localhost:3000/`.
-3. [ ] **Ikona Lucide:** Ikona zdefiniowana w parametrze `icon` renderuje się poprawnie (nie wyświetla się pusty obszar).
-4. [ ] **Zrzut ekranu (Preview Image):** Po kliknięciu w kartę otwiera się modal szczegółów, a grafika zrzutu ekranu wczytuje się bez błędów 404.
-5. [ ] **Adresy URL:** Linki "Launch Project" (przycisk otwierania) oraz "GitHub" (ikona kodu źródłowego) kierują na właściwe adresy.
-6. [ ] **Statystyki GitHub:** Na karcie wyświetlają się poprawne daty w formatach "Created" oraz "Updated" zamiast "N/A" lub ciągłego stanu "Loading...".
-
----
-> **Wskazówka:** W przypadku braku tokenu GitHub API w środowisku, zapytania o statystyki mogą napotkać limity (Rate Limit). W takiej sytuacji serwer może pobrać dane z dużym opóźnieniem lub wyświetlić domyślne dane zapasowe. Agent powinien upewnić się, że serwer pomyślnie przetworzył zapytanie i nie zgłosił krytycznych wyjątków.
+- [ ] **Brak błędów składniowych:** Plik `js/data.js` jest syntaktycznie poprawny, a aplikacja startuje bez błędów w konsoli.
+- [ ] **Karta na Dashboardzie:** Nowa karta projektu jest widoczna zarówno w sekcji wyróżnionej "Featured Projects", jak i w galerii alfabetycznej "A-Z Gallery".
+- [ ] **Ikona Lucide:** Zdefiniowana ikona poprawnie się renderuje i jest wycentrowana.
+- [ ] **Zrzut ekranu (Preview Image):** Po kliknięciu w kartę otwiera się modal i poprawnie wczytuje zrzut ekranu bez błędów 404 (odczytany z `assetsManifest`).
+- [ ] **Adresy URL przycisków:**
+  - Przycisk **Launch Project** przekierowuje do poprawnej lokalizacji strony (domyślnej GitHub Pages dla Scenariusza A LUB dedykowanej domeny dla Scenariusza B).
+  - Ikona **GitHub** przekierowuje do właściwego repozytorium kodu źródłowego.
+- [ ] **Statystyki GitHub:** Na dole karty wyświetlane są poprawne daty ("Created" oraz "Updated") zamiast statusu "Loading..." lub "N/A".

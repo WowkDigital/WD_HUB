@@ -11,6 +11,9 @@ let githubCache = {
     data: {}
 };
 
+// Cooldown timestamp to prevent hammering GitHub API after rate limit hits
+let rateLimitCooldownUntil = 0;
+
 // Load cache from file if it exists
 if (fs.existsSync(CACHE_FILE)) {
     try {
@@ -26,13 +29,19 @@ if (fs.existsSync(CACHE_FILE)) {
 async function fetchRepoStats(owner, repo) {
     const url = `https://api.github.com/repos/${owner}/${repo}`;
     try {
-        const response = await fetch(url, {
-            headers: {
-                'User-Agent': 'WowkDigital-WD-HUB-Server'
-            }
-        });
+        const headers = {
+            'User-Agent': 'WowkDigital-WD-HUB-Server'
+        };
+        if (process.env.GITHUB_TOKEN) {
+            headers['Authorization'] = `token ${process.env.GITHUB_TOKEN}`;
+        }
+        
+        const response = await fetch(url, { headers });
         if (!response.ok) {
             console.error(`Failed to fetch stats for ${owner}/${repo}: ${response.status} ${response.statusText}`);
+            if (response.status === 403 || response.status === 429) {
+                return { rateLimited: true, status: response.status };
+            }
             return null;
         }
         const data = await response.json();
@@ -56,14 +65,39 @@ async function refreshCache() {
         const { projects } = require('./js/data.js');
         
         const newData = {};
+        let rateLimited = false;
+        
         for (const project of projects) {
             if (!project.github) continue;
+            
+            // If we hit rate limit earlier in this batch, keep existing cache data for remaining projects
+            if (rateLimited) {
+                if (githubCache.data[project.github]) {
+                    newData[project.github] = githubCache.data[project.github];
+                }
+                continue;
+            }
+            
             const match = project.github.match(/github\.com\/([^\/]+)\/([^\/]+)/);
             if (match) {
                 const owner = match[1];
                 const repo = match[2].replace(/.git$/, '');
                 console.log(`Fetching stats for ${owner}/${repo}...`);
                 const stats = await fetchRepoStats(owner, repo);
+                
+                if (stats && stats.rateLimited) {
+                    console.warn(`GitHub API Rate limit hit. Suspending batch fetch.`);
+                    rateLimited = true;
+                    // Cooldown for 15 minutes
+                    rateLimitCooldownUntil = Date.now() + 15 * 60 * 1000;
+                    
+                    // Copy existing data for this project and the rest
+                    if (githubCache.data[project.github]) {
+                        newData[project.github] = githubCache.data[project.github];
+                    }
+                    continue;
+                }
+                
                 if (stats) {
                     newData[project.github] = stats;
                 } else if (githubCache.data[project.github]) {
@@ -75,9 +109,10 @@ async function refreshCache() {
             }
         }
 
+        // Only update cache timestamp if we didn't get rate limited on the very first request
         githubCache = {
-            timestamp: Date.now(),
-            data: newData
+            timestamp: rateLimited && Object.keys(newData).length === 0 ? githubCache.timestamp : Date.now(),
+            data: { ...githubCache.data, ...newData }
         };
 
         // Write cache to file
@@ -90,7 +125,9 @@ async function refreshCache() {
 
 // Scheduled check: once a day (24 hours)
 setInterval(() => {
-    refreshCache();
+    if (Date.now() > rateLimitCooldownUntil) {
+        refreshCache();
+    }
 }, 24 * 60 * 60 * 1000);
 
 // Helper for MIME types
@@ -128,7 +165,9 @@ const server = http.createServer(async (req, res) => {
         
         // If cache is empty, older than 24 hours, cache file is missing on disk, or has new projects, trigger refresh
         const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
-        if (githubCache.timestamp < oneDayAgo || Object.keys(githubCache.data).length === 0 || !cacheFileExists || hasNewProjects) {
+        const canRefresh = Date.now() > rateLimitCooldownUntil;
+        
+        if (canRefresh && (githubCache.timestamp < oneDayAgo || Object.keys(githubCache.data).length === 0 || !cacheFileExists || hasNewProjects)) {
             if (Object.keys(githubCache.data).length === 0 || !cacheFileExists || hasNewProjects) {
                 // If cache is completely empty, file is missing, or we have new projects, wait for fetch
                 await refreshCache();

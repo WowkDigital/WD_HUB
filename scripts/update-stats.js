@@ -19,6 +19,9 @@ async function fetchRepoStats(owner, repo, token) {
         const response = await fetch(url, { headers });
         if (!response.ok) {
             console.error(`[ERROR] Failed to fetch stats for ${owner}/${repo}: ${response.status} ${response.statusText}`);
+            if (response.status === 403 || response.status === 429) {
+                return { rateLimited: true, status: response.status };
+            }
             return null;
         }
         const data = await response.json();
@@ -64,12 +67,20 @@ async function run() {
     }
 
     const newData = {};
+    let rateLimited = false;
     console.log(`Starting update for ${projects.length} projects...`);
 
     for (let i = 0; i < projects.length; i++) {
         const project = projects[i];
         if (!project.github) {
             console.log(`[INFO] [${i + 1}/${projects.length}] Skipping "${project.title}" (no GitHub URL)`);
+            continue;
+        }
+
+        if (rateLimited) {
+            if (existingCache.data[project.github]) {
+                newData[project.github] = existingCache.data[project.github];
+            }
             continue;
         }
 
@@ -80,6 +91,15 @@ async function run() {
             console.log(`[FETCH] [${i + 1}/${projects.length}] Fetching stats for ${owner}/${repo}...`);
 
             const stats = await fetchRepoStats(owner, repo, token);
+            if (stats && stats.rateLimited) {
+                console.log(`   [RATE LIMIT] GitHub API Rate limit hit. Suspending further API requests.`);
+                rateLimited = true;
+                if (existingCache.data[project.github]) {
+                    newData[project.github] = existingCache.data[project.github];
+                }
+                continue;
+            }
+
             if (stats) {
                 newData[project.github] = stats;
                 console.log(`   [SUCCESS] Created: ${stats.created_at.split('T')[0]} | Updated: ${stats.pushed_at.split('T')[0]}`);

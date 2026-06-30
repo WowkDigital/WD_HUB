@@ -12,7 +12,11 @@ from selenium.webdriver.chrome.options import Options
 
 def get_repo_details(owner, repo):
     url = f"https://api.github.com/repos/{owner}/{repo}"
-    req = urllib.request.Request(url, headers={'User-Agent': 'WD-HUB-Automation'})
+    headers = {'User-Agent': 'WD-HUB-Automation'}
+    token = os.environ.get('GITHUB_TOKEN') or os.environ.get('GH_TOKEN')
+    if token:
+        headers['Authorization'] = f"token {token}"
+    req = urllib.request.Request(url, headers=headers)
     try:
         with urllib.request.urlopen(req) as response:
             return json.loads(response.read().decode())
@@ -175,18 +179,47 @@ def main():
         f.write(new_content)
     print("Project successfully registered in js/data.js")
 
-    # 5. Clear GitHub Stats cache
+    # 5. Update GitHub Stats cache directly
     cache_path = "github-stats-cache.json"
+    
+    # Get stats from repo_data or use defaults if rate limited / empty
+    if repo_data:
+        created_at = repo_data.get('created_at')
+        pushed_at = repo_data.get('pushed_at') or repo_data.get('updated_at')
+        updated_at = repo_data.get('updated_at')
+    else:
+        now_iso = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
+        created_at = now_iso
+        pushed_at = now_iso
+        updated_at = now_iso
+        
+    cache_data = {"timestamp": int(time.time() * 1000), "data": {}}
     if os.path.exists(cache_path):
         try:
-            os.remove(cache_path)
-            print("Deleted github-stats-cache.json (will be rebuilt on server load)")
+            with open(cache_path, "r", encoding="utf-8") as f:
+                cache_data = json.load(f)
         except Exception as e:
-            print(f"Error removing statistics cache: {e}")
-    else:
-        print("No cache file to delete, skipping.")
+            print(f"Warning: Could not read existing cache file: {e}")
+            
+    if "data" not in cache_data:
+        cache_data["data"] = {}
+        
+    cache_data["data"][repo_url] = {
+        "created_at": created_at,
+        "pushed_at": pushed_at,
+        "updated_at": updated_at
+    }
+    # Update cache timestamp
+    cache_data["timestamp"] = int(time.time() * 1000)
+    
+    try:
+        with open(cache_path, "w", encoding="utf-8") as f:
+            json.dump(cache_data, f, indent=2)
+        print(f"Updated github-stats-cache.json with stats for {repo_name}.")
+    except Exception as e:
+        print(f"Error saving updated statistics cache: {e}")
 
-    print("\n🚀 App registration complete! If the server is running, refresh the page to fetch fresh stats.")
+    print("\n🚀 App registration complete! Cache has been updated. Refresh the page to see changes.")
 
 if __name__ == "__main__":
     main()
