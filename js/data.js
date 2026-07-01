@@ -16,6 +16,9 @@ const assetsManifest = {
     "assets/Clipboard_WD": [
         "assets/Clipboard_WD/preview.png"
     ],
+    "assets/DualQR_WD": [
+        "assets/DualQR_WD/preview.png"
+    ],
     "assets/FFMPEG_GEN_WD": [
         "assets/FFMPEG_GEN_WD/preview.png"
     ],
@@ -387,6 +390,17 @@ const projects = [
         color: "rose-500",
         effect: "neon",
         imageFolder: "assets/map_hex"
+    },
+    {
+        title: "DualQR_WD",
+        description: "Advanced tool for generating specific QR codes that encode two different messages.",
+        longDescription: "DualQR_WD is an advanced ambivalent QR code generator utilizing diagonal pixel splitting and error correction to encode two different messages in a single image.",
+        url: "https://wowkdigital.github.io/DualQR_WD/",
+        github: "https://github.com/WowkDigital/DualQR_WD",
+        icon: "qr-code",
+        color: "blue-500",
+        effect: "hueRotate",
+        imageFolder: "assets/DualQR_WD"
     }
 ];
 
