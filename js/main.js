@@ -33,6 +33,53 @@ function formatDate(dateStr, short = false) {
     }
 }
 
+function loadCachedGitHubStats() {
+    const cacheKey = 'hub-github-stats';
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) {
+        try {
+            const parsed = JSON.parse(cached);
+            const cachedData = parsed.data;
+            const age = Date.now() - parsed.timestamp;
+            
+            // Check if there are any new projects not present in the cache
+            const hasNewProjects = projects.some(project => project.github && (!cachedData || !cachedData[project.github]));
+            
+            // 24 hours cache limit
+            if (age < 24 * 60 * 60 * 1000 && Object.keys(cachedData).length > 0 && !hasNewProjects) {
+                console.log('Successfully loaded cached GitHub stats synchronously.');
+                statsLoaded = true;
+                githubStats = cachedData || {};
+                projects.forEach(project => {
+                    const repoStats = githubStats[project.github];
+                    if (repoStats) {
+                        project.createdAt = repoStats.created_at;
+                        project.updatedAt = repoStats.pushed_at || repoStats.updated_at;
+                    }
+                });
+                return true;
+            }
+        } catch (e) {
+            console.error('Error loading cached stats synchronously:', e);
+        }
+    }
+    return false;
+}
+
+function isStatsEqual(newStats, oldStats) {
+    if (!newStats || !oldStats) return false;
+    const newKeys = Object.keys(newStats);
+    const oldKeys = Object.keys(oldStats);
+    if (newKeys.length !== oldKeys.length) return false;
+    return newKeys.every(key => {
+        const nVal = newStats[key];
+        const oVal = oldStats[key];
+        if (!nVal || !oVal) return false;
+        return nVal.created_at === oVal.created_at &&
+               (nVal.pushed_at || nVal.updated_at) === (oVal.pushed_at || oVal.updated_at);
+    });
+}
+
 async function fetchGitHubStats() {
     const cacheKey = 'hub-github-stats';
 
@@ -121,6 +168,10 @@ async function fetchGitHubStats() {
 }
 
 function updateProjectDates(stats) {
+    if (statsLoaded && isStatsEqual(stats, githubStats)) {
+        console.log('GitHub stats are unchanged. Skipping re-render.');
+        return;
+    }
     statsLoaded = true;
     githubStats = stats || {};
     projects.forEach(project => {
@@ -140,6 +191,48 @@ function updateProjectDates(stats) {
 function renderProjects() {
     const grid = document.getElementById('projects-grid');
     if (!grid) return;
+
+    // Show loading skeleton if stats are not loaded yet and we are sorting by date
+    if (!statsLoaded && (currentSort === 'updated' || currentSort === 'created')) {
+        if (currentView === 'az') {
+            grid.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full max-w-7xl mb-20 px-4";
+            grid.innerHTML = Array(8).fill(0).map(() => `
+                <div class="glass p-4 rounded-2xl animate-pulse flex items-center justify-between gap-4 h-full relative overflow-hidden border border-white/5">
+                    <div class="flex items-center gap-3.5 min-w-0 flex-grow">
+                        <div class="w-10 h-10 bg-white/5 rounded-xl flex-shrink-0"></div>
+                        <div class="min-w-0 flex-grow space-y-2">
+                            <div class="h-4 bg-white/10 w-1/2 rounded-lg"></div>
+                            <div class="h-3 bg-white/5 w-3/4 rounded-lg"></div>
+                            <div class="h-2.5 bg-white/5 w-1/3 rounded-lg"></div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1.5 flex-shrink-0">
+                        <div class="w-8 h-8 bg-white/5 rounded-lg"></div>
+                        <div class="w-8 h-8 bg-white/5 rounded-lg"></div>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            grid.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-7xl mb-20 px-4";
+            grid.innerHTML = Array(6).fill(0).map(() => `
+                <div class="glass p-8 rounded-3xl animate-pulse flex flex-col h-full relative overflow-hidden border border-white/5">
+                    <div class="w-12 h-12 bg-white/5 rounded-2xl mb-6"></div>
+                    <div class="h-6 bg-white/10 w-2/3 rounded-lg mb-3"></div>
+                    <div class="h-4 bg-white/5 w-full rounded-lg mb-2"></div>
+                    <div class="h-4 bg-white/5 w-5/6 rounded-lg mb-4"></div>
+                    <div class="flex items-center gap-4 text-xs text-gray-500 font-light mb-6 border-t border-white/5 pt-4">
+                        <div class="h-3 bg-white/5 w-24 rounded-lg"></div>
+                        <div class="h-3 bg-white/5 w-24 rounded-lg"></div>
+                    </div>
+                    <div class="mt-auto flex justify-between items-center">
+                        <div class="h-8 bg-white/10 w-28 rounded-xl"></div>
+                        <div class="w-10 h-10 bg-white/5 rounded-xl"></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        return;
+    }
 
     // Filter projects based on search query
     let filteredProjects = projects.filter(project => {
@@ -429,6 +522,9 @@ document.addEventListener('DOMContentLoaded', () => {
             renderProjects();
         });
     }
+
+    // Try to load cached GitHub stats synchronously first to prevent layout jumping/flicker
+    loadCachedGitHubStats();
 
     // Load view mode from localStorage or default to featured
     const savedView = localStorage.getItem('hub-view-mode') || 'featured';
