@@ -157,6 +157,14 @@ const server = http.createServer(async (req, res) => {
         });
         
         const cacheFileExists = fs.existsSync(CACHE_FILE);
+        if (cacheFileExists) {
+            try {
+                const fileContent = fs.readFileSync(CACHE_FILE, 'utf8');
+                githubCache = JSON.parse(fileContent);
+            } catch (e) {
+                console.error('Error loading GitHub stats cache file on request:', e);
+            }
+        }
         
         // Check if there are any new projects not in cache
         delete require.cache[require.resolve('./js/data.js')];
