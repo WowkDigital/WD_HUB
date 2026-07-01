@@ -83,12 +83,13 @@ function isStatsEqual(newStats, oldStats) {
 async function fetchGitHubStats() {
     const cacheKey = 'hub-github-stats';
 
-    // 1. Try to fetch from local backend server first
+    // 1. Try to fetch the static github-stats-cache.json first (supports static hosting like GitHub Pages)
     try {
-        const response = await fetch('/api/github-stats?t=' + Date.now());
+        const response = await fetch('github-stats-cache.json?t=' + Date.now());
         if (response.ok) {
-            const data = await response.json();
-            console.log('Successfully loaded GitHub stats from server.');
+            const cacheObj = await response.json();
+            const data = cacheObj.data || {};
+            console.log('Successfully loaded GitHub stats from cache file.');
             localStorage.setItem(cacheKey, JSON.stringify({
                 timestamp: Date.now(),
                 data: data
@@ -97,8 +98,9 @@ async function fetchGitHubStats() {
             return;
         }
     } catch (e) {
-        console.log('Server API not available, falling back to client-side cache/API.', e);
+        console.log('Static cache file not available, trying API or client-side fallback.', e);
     }
+
 
     // 2. Client-side fallback: check localStorage cache
     const cached = localStorage.getItem(cacheKey);
