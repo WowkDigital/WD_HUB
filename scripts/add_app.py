@@ -6,9 +6,18 @@ import subprocess
 import urllib.request
 import urllib.error
 import re
+import sys
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
+
+# Ensure stdout supports UTF-8, especially on Windows terminal
+if hasattr(sys.stdout, 'reconfigure'):
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
+
 
 def get_repo_details(owner, repo):
     url = f"https://api.github.com/repos/{owner}/{repo}"
@@ -146,7 +155,25 @@ def main():
     escaped_short_desc = short_desc.replace('"', '\\"')
     escaped_long_desc = long_desc.replace('"', '\\"')
 
-    new_project_js = f"""    }},
+    # Look for the ending of the projects list
+    target_pattern = r"""];\s*if\s*\(\s*typeof\s+module\s*!==\s*'undefined'\s*\)"""
+    match = re.search(target_pattern, content)
+    if match:
+        start_idx = match.start()
+    else:
+        # Fallback: simple search for last ];
+        target_str = "];"
+        start_idx = content.rfind(target_str)
+        if start_idx == -1:
+            print("Error: Could not find projects list ending in js/data.js")
+            return
+
+    left_part = content[:start_idx]
+    stripped_left = left_part.rstrip()
+
+    # Determine prefix syntax (comma and spacing) based on whether it ends with a closing brace
+    if stripped_left.endswith("}"):
+        new_project_js = f""",
     {{
         title: "{escaped_title}",
         description: "{escaped_short_desc}",
@@ -158,22 +185,20 @@ def main():
         effect: "{args.effect}",
         imageFolder: "assets/{repo_name}"
     }}"""
-
-    # Look for the ending of the projects list
-    target_pattern = r"""];\s*if\s*\(\s*typeof\s+module\s*!==\s*'undefined'\s*\)"""
-    match = re.search(target_pattern, content)
-    if not match:
-        # Fallback: simple search for last ];
-        target_str = "];"
-        last_idx = content.rfind(target_str)
-        if last_idx != -1:
-            new_content = content[:last_idx] + new_project_js + "\n" + content[last_idx:]
-        else:
-            print("Error: Could not find projects list ending in js/data.js")
-            return
+        new_content = stripped_left + new_project_js + "\n" + content[start_idx:]
     else:
-        start_idx = match.start()
-        new_content = content[:start_idx] + new_project_js + "\n" + content[start_idx:]
+        new_project_js = f"""    {{
+        title: "{escaped_title}",
+        description: "{escaped_short_desc}",
+        longDescription: "{escaped_long_desc}",
+        url: "{app_url}",
+        github: "{repo_url}",
+        icon: "{args.icon}",
+        color: "{args.color}",
+        effect: "{args.effect}",
+        imageFolder: "assets/{repo_name}"
+    }}"""
+        new_content = left_part + new_project_js + "\n" + content[start_idx:]
 
     with open(data_file_path, "w", encoding="utf-8") as f:
         f.write(new_content)
