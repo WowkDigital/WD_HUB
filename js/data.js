@@ -336,7 +336,7 @@ const projects = [
         github: "https://github.com/WowkDigital/MemeBattleWD",
         icon: "globe",
         color: "purple-500",
-        effect: "neon",
+        effect: "battle",
         imageFolder: "assets/MemeBattleWD"
     },
     {

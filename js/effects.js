@@ -103,14 +103,193 @@ const Effects = {
     },
 
     /**
-     * Liquid effect (slow auroral background gradient shifting)
+     * Battle effect (diagonal split line with blue/red combatant glows and electric arc crackles)
      */
-    liquid: (element) => {
-        element.classList.add('liquid-active');
+    battle: (element) => {
+        const container = element.querySelector('.glass');
+        if (!container) return;
+        const canvas = document.createElement('canvas');
+        canvas.style.position = 'absolute';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        canvas.style.zIndex = '0';
+        canvas.style.opacity = '0.35';
+        canvas.style.pointerEvents = 'none';
+        container.appendChild(canvas);
+
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let sparks = [];
+        let flashTimer = 0;
+
+        const resize = () => {
+            const rect = container.getBoundingClientRect();
+            width = canvas.width = rect.width;
+            height = canvas.height = rect.height;
+        };
+        window.addEventListener('resize', resize);
+        resize();
+
+        const draw = () => {
+            ctx.clearRect(0, 0, width, height);
+
+            flashTimer++;
+
+            // Draw side gradients (blue bottom-left, red top-right)
+            const grad = ctx.createLinearGradient(0, height, width, 0);
+            grad.addColorStop(0, 'rgba(59, 130, 246, 0.08)');
+            grad.addColorStop(0.48, 'rgba(59, 130, 246, 0.0)');
+            grad.addColorStop(0.52, 'rgba(239, 68, 68, 0.0)');
+            grad.addColorStop(1, 'rgba(239, 68, 68, 0.08)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, width, height);
+
+            // Draw diagonal line
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.07)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(0, height);
+            ctx.lineTo(width, 0);
+            ctx.stroke();
+
+            // Emit sparks along the diagonal
+            if (Math.random() < 0.16) {
+                sparks.push({
+                    t: 0,
+                    speed: Math.random() * 0.02 + 0.012,
+                    color: Math.random() > 0.5 ? '#3b82f6' : '#ef4444',
+                    size: Math.random() * 2 + 1.2
+                });
+            }
+
+            sparks.forEach((s, idx) => {
+                s.t += s.speed;
+                if (s.t > 1) {
+                    sparks.splice(idx, 1);
+                    return;
+                }
+                const x = s.t * width;
+                const y = height - (s.t * height);
+
+                ctx.fillStyle = s.color;
+                ctx.shadowBlur = 6;
+                ctx.shadowColor = s.color;
+                ctx.beginPath();
+                ctx.arc(x, y, s.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            });
+
+            // Periodically draw lightning crackle along the diagonal
+            if (flashTimer > 150) {
+                const step = flashTimer - 150;
+                if (step < 12) {
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+                    ctx.lineWidth = 1.2;
+                    ctx.shadowBlur = 8;
+                    ctx.shadowColor = '#a855f7';
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(0, height);
+                    const segments = 7;
+                    for (let i = 1; i <= segments; i++) {
+                        const t = i / segments;
+                        const tx = t * width;
+                        const ty = height - (t * height);
+                        const noise = (Math.random() - 0.5) * 15;
+                        
+                        if (i === segments) {
+                            ctx.lineTo(width, 0);
+                        } else {
+                            ctx.lineTo(tx + noise, ty + noise);
+                        }
+                    }
+                    ctx.stroke();
+                    ctx.shadowBlur = 0;
+                } else {
+                    flashTimer = 0;
+                }
+            }
+        };
+
+        const interval = setInterval(draw, 30);
+
+        Effects.activeCleanups.push(() => {
+            clearInterval(interval);
+            window.removeEventListener('resize', resize);
+        });
     },
 
     /**
-     * Alchemy effect (rotating and activating transmutation circle on canvas)
+     * Liquid effect (organic blobs floating like a lava lamp, using blur blending)
+     */
+    liquid: (element) => {
+        const container = element.querySelector('.glass');
+        if (!container) return;
+        const canvas = document.createElement('canvas');
+        canvas.style.position = 'absolute';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        canvas.style.zIndex = '0';
+        canvas.style.opacity = '0.35';
+        canvas.style.pointerEvents = 'none';
+        container.appendChild(canvas);
+
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let blobs = [];
+
+        const resize = () => {
+            const rect = container.getBoundingClientRect();
+            width = canvas.width = rect.width;
+            height = canvas.height = rect.height;
+        };
+        window.addEventListener('resize', resize);
+        resize();
+
+        blobs = [
+            { x: Math.random() * 100 + 40, y: Math.random() * 100 + 40, vx: 0.35, vy: 0.25, r: 50, color: 'rgba(99, 102, 241, 0.45)' },
+            { x: Math.random() * 100 + 100, y: Math.random() * 100 + 40, vx: -0.25, vy: 0.45, r: 60, color: 'rgba(168, 85, 247, 0.45)' },
+            { x: Math.random() * 100 + 40, y: Math.random() * 100 + 100, vx: 0.45, vy: -0.35, r: 45, color: 'rgba(236, 72, 153, 0.45)' },
+            { x: Math.random() * 100 + 100, y: Math.random() * 100 + 100, vx: -0.35, vy: -0.25, r: 55, color: 'rgba(59, 130, 246, 0.45)' }
+        ];
+
+        const draw = () => {
+            ctx.clearRect(0, 0, width, height);
+
+            ctx.filter = 'blur(24px)';
+            blobs.forEach(b => {
+                b.x += b.vx;
+                b.y += b.vy;
+
+                if (b.x - b.r < 0 || b.x + b.r > width) b.vx *= -1;
+                if (b.y - b.r < 0 || b.y + b.r > height) b.vy *= -1;
+
+                b.x = Math.max(b.r, Math.min(width - b.r, b.x));
+                b.y = Math.max(b.r, Math.min(height - b.r, b.y));
+
+                ctx.fillStyle = b.color;
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            ctx.filter = 'none';
+        };
+
+        const interval = setInterval(draw, 35);
+
+        Effects.activeCleanups.push(() => {
+            clearInterval(interval);
+            window.removeEventListener('resize', resize);
+        });
+    },
+
+    /**
+     * Alchemy effect (rotating transmutation circle and floating alchemical sparks)
      */
     alchemy: (element) => {
         const container = element.querySelector('.glass');
@@ -132,6 +311,7 @@ const Effects = {
         let pulse = 0;
         let activeTimer = 0;
         let isActivating = false;
+        let sparks = [];
 
         const resize = () => {
             const rect = container.getBoundingClientRect();
@@ -151,9 +331,8 @@ const Effects = {
             rotation += 0.004;
             pulse += 0.04;
 
-            // Alchemy activation cycle
             activeTimer++;
-            if (activeTimer > 250) { // activation every ~7 seconds
+            if (activeTimer > 250) {
                 isActivating = true;
                 if (activeTimer > 290) {
                     activeTimer = 0;
@@ -161,16 +340,41 @@ const Effects = {
                 }
             }
 
-            let alpha = 0.25 + Math.sin(pulse) * 0.08;
+            let alpha = 0.22 + Math.sin(pulse) * 0.07;
             let glow = 0;
             if (isActivating) {
                 const progress = (activeTimer - 250) / 40;
-                alpha = progress < 0.5 ? 0.25 + progress * 1.5 : 1.0 - (progress - 0.5) * 1.5;
+                alpha = progress < 0.5 ? 0.22 + progress * 1.5 : 1.0 - (progress - 0.5) * 1.5;
                 glow = progress < 0.5 ? progress * 25 : (1.0 - progress) * 25;
             }
 
+            // Draw alchemical floating sparks
+            if (Math.random() < 0.14 && sparks.length < 22) {
+                sparks.push({
+                    x: Math.random() * width,
+                    y: height - 10,
+                    vy: -(Math.random() * 0.8 + 0.4),
+                    vx: (Math.random() - 0.5) * 0.3,
+                    size: Math.random() * 1.8 + 1,
+                    alpha: 1.0
+                });
+            }
+            sparks.forEach((s, idx) => {
+                s.x += s.vx;
+                s.y += s.vy;
+                s.alpha -= 0.012;
+                if (s.alpha <= 0 || s.y < 0) {
+                    sparks.splice(idx, 1);
+                    return;
+                }
+                ctx.fillStyle = `rgba(239, 68, 68, ${s.alpha * 0.4})`;
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
             ctx.shadowBlur = glow;
-            ctx.shadowColor = 'rgba(239, 68, 68, 0.8)'; // Red alchemical energy
+            ctx.shadowColor = 'rgba(239, 68, 68, 0.8)';
             ctx.strokeStyle = `rgba(239, 68, 68, ${alpha})`;
             ctx.lineWidth = 1.5;
 
@@ -178,17 +382,14 @@ const Effects = {
             ctx.translate(cx, cy);
             ctx.rotate(rotation);
 
-            // Outer circle
             ctx.beginPath();
             ctx.arc(0, 0, maxRadius, 0, Math.PI * 2);
             ctx.stroke();
 
-            // Inner circle
             ctx.beginPath();
             ctx.arc(0, 0, maxRadius * 0.85, 0, Math.PI * 2);
             ctx.stroke();
 
-            // Heptagram or triangles inside
             ctx.beginPath();
             for (let i = 0; i < 3; i++) {
                 const angle = (i * Math.PI * 2) / 3;
@@ -211,12 +412,12 @@ const Effects = {
             ctx.closePath();
             ctx.stroke();
 
-            // Small center circle
             ctx.beginPath();
             ctx.arc(0, 0, maxRadius * 0.35, 0, Math.PI * 2);
             ctx.stroke();
 
             ctx.restore();
+            ctx.shadowBlur = 0;
         };
 
         const interval = setInterval(draw, 25);
@@ -228,7 +429,7 @@ const Effects = {
     },
 
     /**
-     * Radiation effect (hexagonal expansion waves and Geiger counter spikes)
+     * Radiation effect (hexagonal ripples, geiger sparks, and slow nuclear hazard sign rotation)
      */
     radiation: (element) => {
         const container = element.querySelector('.glass');
@@ -249,6 +450,8 @@ const Effects = {
         let ripples = [];
         let particles = [];
         let timeToNextPulse = 0;
+        let hazardRotation = 0;
+        let pulse = 0;
 
         const resize = () => {
             const rect = container.getBoundingClientRect();
@@ -260,6 +463,33 @@ const Effects = {
 
         const draw = () => {
             ctx.clearRect(0, 0, width, height);
+
+            pulse += 0.03;
+
+            // Draw background nuclear hazard symbol
+            ctx.save();
+            ctx.translate(width / 2, height / 2);
+            ctx.rotate(hazardRotation);
+            hazardRotation += 0.0025;
+
+            const hazardAlpha = 0.035 + Math.sin(pulse) * 0.015;
+            ctx.fillStyle = `rgba(16, 185, 129, ${hazardAlpha})`;
+            
+            ctx.beginPath();
+            ctx.arc(0, 0, 7, 0, Math.PI * 2);
+            ctx.fill();
+
+            const rOut = 32;
+            const rIn = 12;
+            for (let i = 0; i < 3; i++) {
+                const angle = (i * Math.PI * 2) / 3;
+                ctx.beginPath();
+                ctx.arc(0, 0, rOut, angle, angle + Math.PI / 3);
+                ctx.arc(0, 0, rIn, angle + Math.PI / 3, angle, true);
+                ctx.closePath();
+                ctx.fill();
+            }
+            ctx.restore();
 
             timeToNextPulse--;
             if (timeToNextPulse <= 0) {
@@ -281,7 +511,7 @@ const Effects = {
                     return;
                 }
 
-                ctx.strokeStyle = `rgba(16, 185, 129, ${r.alpha * 0.35})`;
+                ctx.strokeStyle = `rgba(16, 185, 129, ${r.alpha * 0.3})`;
                 ctx.lineWidth = 1.5;
                 ctx.shadowBlur = 8;
                 ctx.shadowColor = '#10b981';
@@ -315,7 +545,7 @@ const Effects = {
                     particles.splice(idx, 1);
                     return;
                 }
-                ctx.fillStyle = `rgba(52, 211, 153, ${p.alpha * 0.5})`;
+                ctx.fillStyle = `rgba(52, 211, 153, ${p.alpha * 0.45})`;
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
                 ctx.fill();
@@ -331,7 +561,7 @@ const Effects = {
     },
 
     /**
-     * Quantum effect (particle collision and fusion explosion)
+     * Quantum effect (particles colliding and scattering sparks, drawing background vacuum collapse)
      */
     quantum: (element) => {
         const container = element.querySelector('.glass');
@@ -351,6 +581,7 @@ const Effects = {
         let width, height;
         let particles = [];
         let sparks = [];
+        let backgroundDust = [];
         let state = 'charging';
         let chargeTimer = 0;
         let collisionFlash = 0;
@@ -408,11 +639,21 @@ const Effects = {
                 p1.x += p1.vx;
                 p2.x += p2.vx;
 
+                // Spawn vacuum collapse dust sucked towards center
+                if (Math.random() < 0.35) {
+                    backgroundDust.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        alpha: 0.6
+                    });
+                }
+
                 if (Math.abs(p1.x - p2.x) < 6) {
                     state = 'explosion';
                     collisionFlash = 1.0;
                     sparks = [];
-                    for (let i = 0; i < 12; i++) {
+                    backgroundDust = [];
+                    for (let i = 0; i < 14; i++) {
                         const angle = Math.random() * Math.PI * 2;
                         const speed = Math.random() * 3.5 + 1.5;
                         sparks.push({
@@ -440,7 +681,7 @@ const Effects = {
                     s.y += s.vy;
                     s.vx *= 0.94;
                     s.vy *= 0.94;
-                    s.alpha -= 0.025;
+                    s.alpha -= 0.022;
 
                     if (s.alpha <= 0) {
                         sparks.splice(idx, 1);
@@ -465,6 +706,23 @@ const Effects = {
                 }
             }
 
+            // Draw vacuum dust
+            backgroundDust.forEach((d, idx) => {
+                const dx = width / 2 - d.x;
+                const dy = height / 2 - d.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                if (dist < 8) {
+                    backgroundDust.splice(idx, 1);
+                    return;
+                }
+                d.x += (dx / dist) * 2.8;
+                d.y += (dy / dist) * 2.8;
+                ctx.fillStyle = `rgba(255, 255, 255, ${d.alpha * 0.25})`;
+                ctx.beginPath();
+                ctx.arc(d.x, d.y, 1.2, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
             if (state !== 'explosion') {
                 particles.forEach(p => {
                     ctx.fillStyle = p.color;
@@ -487,7 +745,7 @@ const Effects = {
     },
 
     /**
-     * Gravity effect (satellites orbiting around card's central icon)
+     * Gravity effect (satellites orbiting on tilted planes around space-time gravity well sheet under icon)
      */
     gravity: (element) => {
         const container = element.querySelector('.glass');
@@ -533,6 +791,15 @@ const Effects = {
                 cy = (iconRect.top + iconRect.bottom) / 2 - cardRect.top;
             }
 
+            // Draw gravity space-time warping lines (concentric target circles warping downward)
+            ctx.strokeStyle = 'rgba(168, 85, 247, 0.025)';
+            ctx.lineWidth = 1;
+            for (let r = 18; r < 80; r += 14) {
+                ctx.beginPath();
+                ctx.arc(cx, cy, r, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
             bodies.forEach(b => {
                 b.angle += b.speed;
                 const x0 = Math.cos(b.angle) * b.rx;
@@ -546,7 +813,7 @@ const Effects = {
                 b.trail.push({ x: px, y: py });
                 if (b.trail.length > 15) b.trail.shift();
 
-                ctx.strokeStyle = `rgba(255, 255, 255, 0.02)`;
+                ctx.strokeStyle = `rgba(255, 255, 255, 0.018)`;
                 ctx.lineWidth = 1;
                 ctx.beginPath();
                 for (let a = 0; a < Math.PI * 2; a += 0.15) {
@@ -567,7 +834,7 @@ const Effects = {
                         ctx.lineTo(b.trail[i].x, b.trail[i].y);
                     }
                     ctx.strokeStyle = b.color;
-                    ctx.globalAlpha = 0.25;
+                    ctx.globalAlpha = 0.22;
                     ctx.lineWidth = b.size;
                     ctx.stroke();
                     ctx.globalAlpha = 1.0;
@@ -592,7 +859,7 @@ const Effects = {
     },
 
     /**
-     * Railway effect (train light running along border perimeter)
+     * Railway effect (rounded-corner coordinates matching the card radius, drawing rail tracks)
      */
     railway: (element) => {
         const container = element.querySelector('.glass');
@@ -625,26 +892,90 @@ const Effects = {
 
         const getPerimeterPoint = (dist) => {
             const inset = 3;
-            const w = width - inset * 2;
-            const h = height - inset * 2;
-            const perimeter = 2 * w + 2 * h;
+            const r = 24; // corner radius to perfectly match card borders
+            const w_seg = width - inset * 2 - r * 2;
+            const h_seg = height - inset * 2 - r * 2;
+            const arc_len = r * Math.PI / 2;
+            const perimeter = 2 * w_seg + 2 * h_seg + 4 * arc_len;
             
             let d = dist % perimeter;
             if (d < 0) d += perimeter;
 
-            if (d < w) {
-                return { x: inset + d, y: inset };
-            } else if (d < w + h) {
-                return { x: inset + w, y: inset + (d - w) };
-            } else if (d < 2 * w + h) {
-                return { x: inset + w - (d - w - h), y: inset + h };
-            } else {
-                return { x: inset, y: inset + h - (d - 2 * w - h) };
+            if (d < w_seg) {
+                return { x: inset + r + d, y: inset };
             }
+            d -= w_seg;
+
+            if (d < arc_len) {
+                const a = -Math.PI / 2 + d / r;
+                return {
+                    x: width - inset - r + Math.cos(a) * r,
+                    y: inset + r + Math.sin(a) * r
+                };
+            }
+            d -= arc_len;
+
+            if (d < h_seg) {
+                return { x: width - inset, y: inset + r + d };
+            }
+            d -= h_seg;
+
+            if (d < arc_len) {
+                const a = 0 + d / r;
+                return {
+                    x: width - inset - r + Math.cos(a) * r,
+                    y: height - inset - r + Math.sin(a) * r
+                };
+            }
+            d -= arc_len;
+
+            if (d < w_seg) {
+                return { x: width - inset - r - d, y: height - inset };
+            }
+            d -= w_seg;
+
+            if (d < arc_len) {
+                const a = Math.PI / 2 + d / r;
+                return {
+                    x: inset + r + Math.cos(a) * r,
+                    y: height - inset - r + Math.sin(a) * r
+                };
+            }
+            d -= arc_len;
+
+            if (d < h_seg) {
+                return { x: inset, y: height - inset - r - d };
+            }
+            d -= h_seg;
+
+            const a = Math.PI + d / r;
+            return {
+                x: inset + r + Math.cos(a) * r,
+                y: inset + r + Math.sin(a) * r
+            };
         };
 
         const draw = () => {
             ctx.clearRect(0, 0, width, height);
+
+            const inset = 3;
+            const r = 24;
+            const w_seg = width - inset * 2 - r * 2;
+            const h_seg = height - inset * 2 - r * 2;
+            const arc_len = r * Math.PI / 2;
+            const totalLen = 2 * w_seg + 2 * h_seg + 4 * arc_len;
+
+            // Draw track line in background
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.015)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            for (let d = 0; d < totalLen; d += 4) {
+                const p = getPerimeterPoint(d);
+                if (d === 0) ctx.moveTo(p.x, p.y);
+                else ctx.lineTo(p.x, p.y);
+            }
+            ctx.closePath();
+            ctx.stroke();
 
             distance += speed;
 
@@ -673,11 +1004,9 @@ const Effects = {
     },
 
     /**
-     * Pharma effect (EKG monitoring heartbeat line across bottom)
+     * Pharma effect (EKG monitoring heartbeat line coupled with background medic-graph and pulsing heart)
      */
     pharma: (element) => {
-        element.classList.add('pharma-active');
-
         const container = element.querySelector('.glass');
         if (!container) return;
         const canvas = document.createElement('canvas');
@@ -705,41 +1034,83 @@ const Effects = {
 
         const getEKGValue = (phase) => {
             if (phase < 0.1) return 0;
-            if (phase < 0.15) { // P-wave
+            if (phase < 0.15) {
                 const p = (phase - 0.1) / 0.05;
                 return Math.sin(p * Math.PI) * 0.12;
             }
             if (phase < 0.18) return 0;
-            if (phase < 0.20) { // Q-dip
+            if (phase < 0.20) {
                 const p = (phase - 0.18) / 0.02;
                 return -p * 0.18;
             }
-            if (phase < 0.23) { // R-peak
+            if (phase < 0.23) {
                 const p = (phase - 0.20) / 0.03;
                 return -0.18 + p * 1.18;
             }
-            if (phase < 0.26) { // S-dip
+            if (phase < 0.26) {
                 const p = (phase - 0.23) / 0.03;
                 return 1.0 - p * 1.35;
             }
-            if (phase < 0.28) { // baseline
+            if (phase < 0.28) {
                 const p = (phase - 0.26) / 0.02;
                 return -0.35 + p * 0.35;
             }
             if (phase < 0.35) return 0;
-            if (phase < 0.42) { // T-wave
+            if (phase < 0.42) {
                 const p = (phase - 0.35) / 0.07;
                 return Math.sin(p * Math.PI) * 0.25;
             }
             return 0;
         };
 
+        const drawHeart = (c, x, y, size) => {
+            c.beginPath();
+            c.moveTo(x, y + size / 4);
+            c.bezierCurveTo(x - size / 2, y - size / 2, x - size, y + size / 3, x, y + size);
+            c.bezierCurveTo(x + size, y + size / 3, x + size / 2, y - size / 2, x, y + size / 4);
+            c.closePath();
+        };
+
         const draw = () => {
             ctx.clearRect(0, 0, width, height);
 
             time += 2;
+
+            // Draw a subtle medic-graph paper grids in background
+            ctx.strokeStyle = 'rgba(16, 185, 129, 0.015)';
+            ctx.lineWidth = 0.5;
+            for (let x = 0; x < width; x += 12) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, height);
+                ctx.stroke();
+            }
+            for (let y = 0; y < height; y += 12) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+                ctx.stroke();
+            }
+
             const baseY = height * 0.86;
 
+            // Compute EKG value at the horizontal center of the card
+            const centerPhase = ((width / 2 - time) % 240 + 240) % 240 / 240;
+            const ekgVal = getEKGValue(centerPhase);
+
+            // Pulse the heart outline based on R-peak passage
+            const hX = width / 2;
+            const hY = height * 0.46;
+            const hSize = 15 * (1.0 + Math.max(0, ekgVal) * 0.35);
+
+            ctx.strokeStyle = `rgba(16, 185, 129, ${0.04 + Math.max(0, ekgVal) * 0.18})`;
+            ctx.fillStyle = `rgba(16, 185, 129, ${0.01 + Math.max(0, ekgVal) * 0.04})`;
+            ctx.lineWidth = 1.5;
+            drawHeart(ctx, hX, hY, hSize);
+            ctx.fill();
+            ctx.stroke();
+
+            // Draw EKG green line
             ctx.strokeStyle = '#10b981';
             ctx.lineWidth = 1.5;
             ctx.shadowBlur = 5;
@@ -767,7 +1138,7 @@ const Effects = {
     },
 
     /**
-     * VHS effect (flickering CRT scanner and red camera recording status dot)
+     * VHS effect (flicker noise, scanlines, REC indicator, and horizontal chromatic aberration sweep lines)
      */
     vhs: (element) => {
         element.classList.add('vhs-active');
@@ -788,6 +1159,7 @@ const Effects = {
         const ctx = canvas.getContext('2d');
         let width, height;
         let frameCount = 0;
+        let glitchBarY = 0;
 
         const resize = () => {
             const rect = container.getBoundingClientRect();
@@ -812,6 +1184,19 @@ const Effects = {
             }
             ctx.putImageData(imgData, 0, 0);
 
+            // Occasional tracking glitch bar (chromatic distortion sweep)
+            if (Math.random() < 0.06 && glitchBarY === 0) {
+                glitchBarY = Math.random() * height * 0.5;
+            }
+            if (glitchBarY > 0) {
+                ctx.fillStyle = 'rgba(0, 255, 255, 0.08)';
+                ctx.fillRect(0, glitchBarY, width, 5);
+                ctx.fillStyle = 'rgba(255, 0, 0, 0.08)';
+                ctx.fillRect(0, glitchBarY + 3, width, 5);
+                glitchBarY += 2.5;
+                if (glitchBarY > height) glitchBarY = 0;
+            }
+
             ctx.fillStyle = 'rgba(0, 0, 0, 0.12)';
             for (let y = (frameCount % 7); y < height; y += 7) {
                 ctx.fillRect(0, y, width, 2);
@@ -834,11 +1219,9 @@ const Effects = {
     },
 
     /**
-     * Crypto effect (scrolling hex metrics decrypting into terms in the center)
+     * Crypto effect (scrolling cipher code grid with scanning horizontal line spotlight, no border pulse)
      */
     crypto: (element) => {
-        element.classList.add('neon-active');
-
         const container = element.querySelector('.glass');
         if (!container) return;
         const canvas = document.createElement('canvas');
@@ -856,6 +1239,7 @@ const Effects = {
         let width, height;
         let symbols = [];
         let timer = 0;
+        let scannerY = 0;
 
         const resize = () => {
             const rect = container.getBoundingClientRect();
@@ -870,6 +1254,32 @@ const Effects = {
             ctx.clearRect(0, 0, width, height);
 
             timer++;
+
+            // Draw faint digital backdrop grid
+            ctx.strokeStyle = 'rgba(59, 130, 246, 0.015)';
+            ctx.lineWidth = 1;
+            for (let x = 0; x < width; x += 16) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, height);
+                ctx.stroke();
+            }
+            for (let y = 0; y < height; y += 16) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+                ctx.stroke();
+            }
+
+            scannerY += 1.8;
+            if (scannerY > height) scannerY = 0;
+
+            ctx.strokeStyle = 'rgba(59, 130, 246, 0.07)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(0, scannerY);
+            ctx.lineTo(width, scannerY);
+            ctx.stroke();
 
             if (Math.random() < 0.4 && symbols.length < 20) {
                 symbols.push({
@@ -913,8 +1323,9 @@ const Effects = {
                     return;
                 }
 
-                ctx.fillStyle = `rgba(59, 130, 246, ${s.alpha})`;
-                ctx.font = '10px monospace';
+                const nearScan = Math.abs(s.y - scannerY) < 16;
+                ctx.fillStyle = nearScan ? `rgba(96, 165, 250, ${s.alpha * 0.95})` : `rgba(59, 130, 246, ${s.alpha})`;
+                ctx.font = nearScan ? 'bold 11px monospace' : '10px monospace';
                 ctx.fillText(s.char, s.x, s.y);
             });
         };
@@ -928,7 +1339,7 @@ const Effects = {
     },
 
     /**
-     * Draw effect (colorful bezier path drawn periodically, fading away)
+     * Draw effect (colorful brush strokes leaving behind falling paint droplets at sharp curves)
      */
     draw: (element) => {
         const container = element.querySelector('.glass');
@@ -947,6 +1358,7 @@ const Effects = {
         const ctx = canvas.getContext('2d');
         let width, height;
         let points = [];
+        let droplets = [];
         let drawingTimer = 0;
         let drawColor = 'rgba(99, 102, 241, 0.4)';
         let isDrawing = false;
@@ -992,11 +1404,39 @@ const Effects = {
                         y: Math.max(10, Math.min(height - 10, last.y + Math.sin(angle) * len)),
                         alpha: 1.0
                     });
+
+                    // Occasionally spawn falling paint droplet
+                    if (Math.random() < 0.25) {
+                        droplets.push({
+                            x: last.x,
+                            y: last.y,
+                            vy: Math.random() * 0.6 + 0.35,
+                            size: Math.random() * 2 + 1,
+                            alpha: 0.85,
+                            color: drawColor
+                        });
+                    }
                 } else if (points.length >= 30) {
                     isDrawing = false;
                     drawingTimer = 0;
                 }
             }
+
+            // Draw/update falling droplets
+            droplets.forEach((d, idx) => {
+                d.y += d.vy;
+                d.alpha -= 0.012;
+                if (d.alpha <= 0 || d.y > height) {
+                    droplets.splice(idx, 1);
+                    return;
+                }
+                ctx.fillStyle = d.color;
+                ctx.globalAlpha = d.alpha;
+                ctx.beginPath();
+                ctx.arc(d.x, d.y, d.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalAlpha = 1.0;
+            });
 
             if (points.length > 1) {
                 ctx.beginPath();
@@ -1031,7 +1471,7 @@ const Effects = {
     },
 
     /**
-     * Neon pulse effect
+     * Neon pulse effect (compatibility placeholder)
      */
     neon: (element) => {
         element.classList.add('neon-active');
@@ -1057,7 +1497,7 @@ const Effects = {
     },
 
     /**
-     * Hue rotate effect
+     * Hue rotate effect (compatibility placeholder)
      */
     hueRotate: (element) => {
         element.classList.add('hue-active');
