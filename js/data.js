@@ -86,7 +86,7 @@ const projects = [
         github: "https://github.com/WowkDigital/TransmutationCircle",
         icon: "flask-conical",
         color: "red-500",
-        effect: "hueRotate",
+        effect: "alchemy",
         imageFolder: "assets/TransmutationCircle"
     },
     {
@@ -166,7 +166,7 @@ const projects = [
         github: "https://github.com/WowkDigital/organic_pattern_generator",
         icon: "infinity",
         color: "rose-400",
-        effect: "neon"
+        effect: "liquid"
     },
     {
         title: "PDF Extractor",
@@ -216,7 +216,7 @@ const projects = [
         github: "https://github.com/WowkDigital/railway_network",
         icon: "train",
         color: "blue-500",
-        effect: "neon",
+        effect: "railway",
         imageFolder: "assets/RailwayNetwork"
     },
     {
@@ -227,7 +227,7 @@ const projects = [
         github: "https://github.com/WowkDigital/GravitySimulatorWD",
         icon: "orbit",
         color: "purple-500",
-        effect: "hueRotate",
+        effect: "gravity",
         imageFolder: "assets/GravitySimulator"
     },
     {
@@ -259,7 +259,7 @@ const projects = [
         github: "https://github.com/WowkDigital/PharmaSignWD",
         icon: "activity",
         color: "emerald-500",
-        effect: "hueRotate",
+        effect: "pharma",
         imageFolder: "assets/PharmaSignWD"
     },
     {
@@ -270,7 +270,7 @@ const projects = [
         github: "https://github.com/WowkDigital/RadioactiveHexWD",
         icon: "radio",
         color: "emerald-500",
-        effect: "hueRotate",
+        effect: "radiation",
         imageFolder: "assets/RadioactiveHex"
     },
     {
@@ -292,7 +292,7 @@ const projects = [
         github: "https://github.com/WowkDigital/ChainReactionWD",
         icon: "atom",
         color: "amber-500",
-        effect: "hueRotate",
+        effect: "quantum",
         imageFolder: "assets/ChainReactionWD"
     },
     {
@@ -303,7 +303,7 @@ const projects = [
         github: "https://github.com/WowkDigital/Backrooms_3D",
         icon: "ghost",
         color: "yellow-500",
-        effect: "glitch",
+        effect: "vhs",
         imageFolder: "assets/Backrooms_3D"
     },
     {
@@ -358,7 +358,7 @@ const projects = [
         github: "https://github.com/WowkDigital/Clipboard_WD",
         icon: "clipboard",
         color: "blue-500",
-        effect: "neon",
+        effect: "crypto",
         imageFolder: "assets/Clipboard_WD"
     },
     {
@@ -369,7 +369,7 @@ const projects = [
         github: "https://github.com/WowkDigital/train_game_WD",
         icon: "train",
         color: "blue-500",
-        effect: "hueRotate",
+        effect: "railway",
         imageFolder: "assets/train_game_WD"
     },
     {
@@ -380,7 +380,7 @@ const projects = [
         github: "https://github.com/WowkDigital/LiminalOS",
         icon: "terminal",
         color: "amber-500",
-        effect: "glitch",
+        effect: "vhs",
         imageFolder: "assets/LiminalOS"
     },
     {
@@ -413,7 +413,7 @@ const projects = [
         github: "https://github.com/WowkDigital/CollabDraw_WD",
         icon: "brush",
         color: "blue-500",
-        effect: "neon",
+        effect: "draw",
         imageFolder: "assets/CollabDraw_WD"
     }
 ];

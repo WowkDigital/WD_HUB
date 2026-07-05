@@ -68,10 +68,7 @@ Jeśli automatyczny skrypt zgłosi błąd (np. błąd Selenium, brak zainstalowa
 2. Pozyskaj zrzut ekranu aplikacji (preferowany ciemny motyw, proporcje 16:9, rozdzielczość minimum 1280x720) i zapisz go jako `preview.png` w nowo utworzonym folderze (np. `assets/<NazwaRepozytorium>/preview.png`).
 
 ### Krok 2: Uruchomienie synchronizacji zasobów
-WD HUB korzysta z automatycznie wygenerowanego manifestu plików graficznych w `js/data.js`. Aby zarejestrować nowo dodany plik `preview.png`, możesz poczekać aż skrypt zrobi to w pythonie automatycznie lub uruchomić:
-```powershell
-node scripts/sync-assets.js
-```
+WD HUB korzysta z automatycznie wygenerowanego manifestu plików graficznych w `js/data.js`. Plik `add_app.py` automatycznie synchronizuje zasoby. Jeśli jednak wykonujesz kroki ręcznie, możesz zsynchronizować zasoby uruchamiając skrypt `add_app.py` (który wykona to automatycznie w Pythonie).
 
 ### Krok 3: Rejestracja konfiguracji w `js/data.js`
 Otwórz plik `js/data.js` i ręcznie dopisz obiekt nowej aplikacji na końcu tablicy `projects`.
@@ -110,10 +107,10 @@ Aby nowo dodana aplikacja natychmiast posiadała daty utworzenia i aktualizacji 
        }
    ```
 
-3. **Zrestartuj serwer backendowy Node.js:**
-   Zatrzymaj aktualnie działający proces serwera i uruchom go ponownie w głównym katalogu `WD_HUB`:
+3. **Uruchamianie serwera lokalnego (Python):**
+   Projekt nie ma już zależności z Node.js. Aby uruchomić lokalny serwer i podejrzeć zmiany, wykonaj w głównym katalogu `WD_HUB`:
    ```powershell
-   node server.js
+   python -m http.server 3000
    ```
 
 ---
