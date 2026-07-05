@@ -12,6 +12,21 @@ const Effects = {
     },
 
     /**
+     * Helper to keep canvas resolution synchronized with client bounding rect
+     */
+    checkCanvasSize: (canvas, container) => {
+        const rect = container.getBoundingClientRect();
+        const w = Math.round(rect.width);
+        const h = Math.round(rect.height);
+        if (canvas.width !== w || canvas.height !== h) {
+            canvas.width = w;
+            canvas.height = h;
+            return { width: w, height: h, resized: true };
+        }
+        return { width: canvas.width, height: canvas.height, resized: false };
+    },
+
+    /**
      * Glitch effect (Glitch Studio style)
      */
     glitch: (element) => {
@@ -41,7 +56,6 @@ const Effects = {
         const container = element.querySelector('.glass');
         if (!container) return;
 
-        // Create canvas
         const canvas = document.createElement('canvas');
         canvas.style.position = 'absolute';
         canvas.style.top = '0';
@@ -54,28 +68,20 @@ const Effects = {
         container.appendChild(canvas);
 
         const ctx = canvas.getContext('2d');
-        let width, height, columns;
-        const fontSize = 10; // Smaller font
+        let width = 0, height = 0, columns = 0;
+        const fontSize = 10;
         let drops = [];
-
-        const resize = () => {
-            // Get actual pixel dimensions for the canvas to prevent stretching
-            const rect = container.getBoundingClientRect();
-            width = canvas.width = rect.width;
-            height = canvas.height = rect.height;
-
-            // Fewer columns by adding more space between them
-            columns = Math.floor(width / (fontSize * 1.5));
-            drops = new Array(columns).fill(0).map(() => Math.random() * -100); // Random start positions
-        };
-
-        window.addEventListener('resize', resize);
-        resize();
-
         const characters = '01';
 
-        function draw() {
-            // Fading trail
+        const draw = () => {
+            const size = Effects.checkCanvasSize(canvas, container);
+            width = size.width;
+            height = size.height;
+            if (size.resized) {
+                columns = Math.floor(width / (fontSize * 1.5));
+                drops = new Array(columns).fill(0).map(() => Math.random() * -100);
+            }
+
             ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
             ctx.fillRect(0, 0, width, height);
 
@@ -84,21 +90,19 @@ const Effects = {
 
             for (let i = 0; i < drops.length; i++) {
                 const text = characters.charAt(Math.floor(Math.random() * characters.length));
-                // i * fontSize * 1.5 to match the column spacing in resize()
                 ctx.fillText(text, i * fontSize * 1.5, drops[i] * fontSize);
 
-                if (drops[i] * fontSize > height && Math.random() > 0.985) { // Lower probability to restart
+                if (drops[i] * fontSize > height && Math.random() > 0.985) {
                     drops[i] = 0;
                 }
                 drops[i]++;
             }
-        }
+        };
 
-        const interval = setInterval(draw, 80); // Slower animation (was 50ms)
+        const interval = setInterval(draw, 80);
 
         Effects.activeCleanups.push(() => {
             clearInterval(interval);
-            window.removeEventListener('resize', resize);
         });
     },
 
@@ -120,19 +124,15 @@ const Effects = {
         container.appendChild(canvas);
 
         const ctx = canvas.getContext('2d');
-        let width, height;
+        let width = 0, height = 0;
         let sparks = [];
         let flashTimer = 0;
 
-        const resize = () => {
-            const rect = container.getBoundingClientRect();
-            width = canvas.width = rect.width;
-            height = canvas.height = rect.height;
-        };
-        window.addEventListener('resize', resize);
-        resize();
-
         const draw = () => {
+            const size = Effects.checkCanvasSize(canvas, container);
+            width = size.width;
+            height = size.height;
+
             ctx.clearRect(0, 0, width, height);
 
             flashTimer++;
@@ -218,7 +218,6 @@ const Effects = {
 
         Effects.activeCleanups.push(() => {
             clearInterval(interval);
-            window.removeEventListener('resize', resize);
         });
     },
 
@@ -240,25 +239,23 @@ const Effects = {
         container.appendChild(canvas);
 
         const ctx = canvas.getContext('2d');
-        let width, height;
+        let width = 0, height = 0;
         let blobs = [];
 
-        const resize = () => {
-            const rect = container.getBoundingClientRect();
-            width = canvas.width = rect.width;
-            height = canvas.height = rect.height;
-        };
-        window.addEventListener('resize', resize);
-        resize();
-
-        blobs = [
-            { x: Math.random() * 100 + 40, y: Math.random() * 100 + 40, vx: 0.35, vy: 0.25, r: 50, color: 'rgba(99, 102, 241, 0.45)' },
-            { x: Math.random() * 100 + 100, y: Math.random() * 100 + 40, vx: -0.25, vy: 0.45, r: 60, color: 'rgba(168, 85, 247, 0.45)' },
-            { x: Math.random() * 100 + 40, y: Math.random() * 100 + 100, vx: 0.45, vy: -0.35, r: 45, color: 'rgba(236, 72, 153, 0.45)' },
-            { x: Math.random() * 100 + 100, y: Math.random() * 100 + 100, vx: -0.35, vy: -0.25, r: 55, color: 'rgba(59, 130, 246, 0.45)' }
-        ];
-
         const draw = () => {
+            const size = Effects.checkCanvasSize(canvas, container);
+            width = size.width;
+            height = size.height;
+
+            if (size.resized || blobs.length === 0) {
+                blobs = [
+                    { x: Math.random() * width, y: Math.random() * height, vx: 0.35, vy: 0.25, r: Math.min(width, height) * 0.22, color: 'rgba(99, 102, 241, 0.45)' },
+                    { x: Math.random() * width, y: Math.random() * height, vx: -0.25, vy: 0.45, r: Math.min(width, height) * 0.25, color: 'rgba(168, 85, 247, 0.45)' },
+                    { x: Math.random() * width, y: Math.random() * height, vx: 0.45, vy: -0.35, r: Math.min(width, height) * 0.20, color: 'rgba(236, 72, 153, 0.45)' },
+                    { x: Math.random() * width, y: Math.random() * height, vx: -0.35, vy: -0.25, r: Math.min(width, height) * 0.24, color: 'rgba(59, 130, 246, 0.45)' }
+                ];
+            }
+
             ctx.clearRect(0, 0, width, height);
 
             ctx.filter = 'blur(24px)';
@@ -284,7 +281,6 @@ const Effects = {
 
         Effects.activeCleanups.push(() => {
             clearInterval(interval);
-            window.removeEventListener('resize', resize);
         });
     },
 
@@ -306,22 +302,18 @@ const Effects = {
         container.appendChild(canvas);
 
         const ctx = canvas.getContext('2d');
-        let width, height;
+        let width = 0, height = 0;
         let rotation = 0;
         let pulse = 0;
         let activeTimer = 0;
         let isActivating = false;
         let sparks = [];
 
-        const resize = () => {
-            const rect = container.getBoundingClientRect();
-            width = canvas.width = rect.width;
-            height = canvas.height = rect.height;
-        };
-        window.addEventListener('resize', resize);
-        resize();
-
         const draw = () => {
+            const size = Effects.checkCanvasSize(canvas, container);
+            width = size.width;
+            height = size.height;
+
             ctx.clearRect(0, 0, width, height);
 
             const cx = width / 2;
@@ -424,7 +416,6 @@ const Effects = {
 
         Effects.activeCleanups.push(() => {
             clearInterval(interval);
-            window.removeEventListener('resize', resize);
         });
     },
 
@@ -446,22 +437,18 @@ const Effects = {
         container.appendChild(canvas);
 
         const ctx = canvas.getContext('2d');
-        let width, height;
+        let width = 0, height = 0;
         let ripples = [];
         let particles = [];
         let timeToNextPulse = 0;
         let hazardRotation = 0;
         let pulse = 0;
 
-        const resize = () => {
-            const rect = container.getBoundingClientRect();
-            width = canvas.width = rect.width;
-            height = canvas.height = rect.height;
-        };
-        window.addEventListener('resize', resize);
-        resize();
-
         const draw = () => {
+            const size = Effects.checkCanvasSize(canvas, container);
+            width = size.width;
+            height = size.height;
+
             ctx.clearRect(0, 0, width, height);
 
             pulse += 0.03;
@@ -556,7 +543,6 @@ const Effects = {
 
         Effects.activeCleanups.push(() => {
             clearInterval(interval);
-            window.removeEventListener('resize', resize);
         });
     },
 
@@ -578,21 +564,13 @@ const Effects = {
         container.appendChild(canvas);
 
         const ctx = canvas.getContext('2d');
-        let width, height;
+        let width = 0, height = 0;
         let particles = [];
         let sparks = [];
         let backgroundDust = [];
         let state = 'charging';
         let chargeTimer = 0;
         let collisionFlash = 0;
-
-        const resize = () => {
-            const rect = container.getBoundingClientRect();
-            width = canvas.width = rect.width;
-            height = canvas.height = rect.height;
-        };
-        window.addEventListener('resize', resize);
-        resize();
 
         const initParticles = () => {
             particles = [
@@ -602,9 +580,11 @@ const Effects = {
         };
 
         const draw = () => {
-            ctx.clearRect(0, 0, width, height);
+            const size = Effects.checkCanvasSize(canvas, container);
+            width = size.width;
+            height = size.height;
 
-            if (particles.length === 0) {
+            if (size.resized || particles.length === 0) {
                 initParticles();
             }
 
@@ -639,7 +619,6 @@ const Effects = {
                 p1.x += p1.vx;
                 p2.x += p2.vx;
 
-                // Spawn vacuum collapse dust sucked towards center
                 if (Math.random() < 0.35) {
                     backgroundDust.push({
                         x: Math.random() * width,
@@ -706,7 +685,6 @@ const Effects = {
                 }
             }
 
-            // Draw vacuum dust
             backgroundDust.forEach((d, idx) => {
                 const dx = width / 2 - d.x;
                 const dy = height / 2 - d.y;
@@ -740,7 +718,6 @@ const Effects = {
 
         Effects.activeCleanups.push(() => {
             clearInterval(interval);
-            window.removeEventListener('resize', resize);
         });
     },
 
@@ -762,24 +739,22 @@ const Effects = {
         container.appendChild(canvas);
 
         const ctx = canvas.getContext('2d');
-        let width, height;
+        let width = 0, height = 0;
         let bodies = [];
 
-        const resize = () => {
-            const rect = container.getBoundingClientRect();
-            width = canvas.width = rect.width;
-            height = canvas.height = rect.height;
-        };
-        window.addEventListener('resize', resize);
-        resize();
-
-        bodies = [
-            { angle: 0, speed: 0.035, rx: 25, ry: 9, tilt: -0.15, color: '#a855f7', size: 2.8, trail: [] },
-            { angle: Math.PI * 0.6, speed: 0.022, rx: 35, ry: 13, tilt: 0.35, color: '#ec4899', size: 2.2, trail: [] },
-            { angle: Math.PI * 1.3, speed: 0.016, rx: 45, ry: 17, tilt: -0.4, color: '#6366f1', size: 1.8, trail: [] }
-        ];
-
         const draw = () => {
+            const size = Effects.checkCanvasSize(canvas, container);
+            width = size.width;
+            height = size.height;
+
+            if (size.resized || bodies.length === 0) {
+                bodies = [
+                    { angle: 0, speed: 0.035, rx: 25, ry: 9, tilt: -0.15, color: '#a855f7', size: 2.8, trail: [] },
+                    { angle: Math.PI * 0.6, speed: 0.022, rx: 35, ry: 13, tilt: 0.35, color: '#ec4899', size: 2.2, trail: [] },
+                    { angle: Math.PI * 1.3, speed: 0.016, rx: 45, ry: 17, tilt: -0.4, color: '#6366f1', size: 1.8, trail: [] }
+                ];
+            }
+
             ctx.clearRect(0, 0, width, height);
 
             let cx = 56, cy = 56;
@@ -791,7 +766,6 @@ const Effects = {
                 cy = (iconRect.top + iconRect.bottom) / 2 - cardRect.top;
             }
 
-            // Draw gravity space-time warping lines (concentric target circles warping downward)
             ctx.strokeStyle = 'rgba(168, 85, 247, 0.025)';
             ctx.lineWidth = 1;
             for (let r = 18; r < 80; r += 14) {
@@ -854,7 +828,6 @@ const Effects = {
 
         Effects.activeCleanups.push(() => {
             clearInterval(interval);
-            window.removeEventListener('resize', resize);
         });
     },
 
@@ -876,23 +849,15 @@ const Effects = {
         container.appendChild(canvas);
 
         const ctx = canvas.getContext('2d');
-        let width, height;
+        let width = 0, height = 0;
         let distance = 0;
         const speed = 1.6;
         const trainLength = 4;
         const carSpacing = 10;
 
-        const resize = () => {
-            const rect = container.getBoundingClientRect();
-            width = canvas.width = rect.width;
-            height = canvas.height = rect.height;
-        };
-        window.addEventListener('resize', resize);
-        resize();
-
         const getPerimeterPoint = (dist) => {
             const inset = 3;
-            const r = 24; // corner radius to perfectly match card borders
+            const r = 24;
             const w_seg = width - inset * 2 - r * 2;
             const h_seg = height - inset * 2 - r * 2;
             const arc_len = r * Math.PI / 2;
@@ -956,6 +921,10 @@ const Effects = {
         };
 
         const draw = () => {
+            const size = Effects.checkCanvasSize(canvas, container);
+            width = size.width;
+            height = size.height;
+
             ctx.clearRect(0, 0, width, height);
 
             const inset = 3;
@@ -965,7 +934,6 @@ const Effects = {
             const arc_len = r * Math.PI / 2;
             const totalLen = 2 * w_seg + 2 * h_seg + 4 * arc_len;
 
-            // Draw track line in background
             ctx.strokeStyle = 'rgba(255, 255, 255, 0.015)';
             ctx.lineWidth = 1;
             ctx.beginPath();
@@ -999,7 +967,6 @@ const Effects = {
 
         Effects.activeCleanups.push(() => {
             clearInterval(interval);
-            window.removeEventListener('resize', resize);
         });
     },
 
@@ -1021,16 +988,8 @@ const Effects = {
         container.appendChild(canvas);
 
         const ctx = canvas.getContext('2d');
-        let width, height;
+        let width = 0, height = 0;
         let time = 0;
-
-        const resize = () => {
-            const rect = container.getBoundingClientRect();
-            width = canvas.width = rect.width;
-            height = canvas.height = rect.height;
-        };
-        window.addEventListener('resize', resize);
-        resize();
 
         const getEKGValue = (phase) => {
             if (phase < 0.1) return 0;
@@ -1072,11 +1031,14 @@ const Effects = {
         };
 
         const draw = () => {
+            const size = Effects.checkCanvasSize(canvas, container);
+            width = size.width;
+            height = size.height;
+
             ctx.clearRect(0, 0, width, height);
 
             time += 2;
 
-            // Draw a subtle medic-graph paper grids in background
             ctx.strokeStyle = 'rgba(16, 185, 129, 0.015)';
             ctx.lineWidth = 0.5;
             for (let x = 0; x < width; x += 12) {
@@ -1094,11 +1056,9 @@ const Effects = {
 
             const baseY = height * 0.86;
 
-            // Compute EKG value at the horizontal center of the card
             const centerPhase = ((width / 2 - time) % 240 + 240) % 240 / 240;
             const ekgVal = getEKGValue(centerPhase);
 
-            // Pulse the heart outline based on R-peak passage
             const hX = width / 2;
             const hY = height * 0.46;
             const hSize = 15 * (1.0 + Math.max(0, ekgVal) * 0.35);
@@ -1110,7 +1070,6 @@ const Effects = {
             ctx.fill();
             ctx.stroke();
 
-            // Draw EKG green line
             ctx.strokeStyle = '#10b981';
             ctx.lineWidth = 1.5;
             ctx.shadowBlur = 5;
@@ -1133,7 +1092,6 @@ const Effects = {
 
         Effects.activeCleanups.push(() => {
             clearInterval(interval);
-            window.removeEventListener('resize', resize);
         });
     },
 
@@ -1157,19 +1115,15 @@ const Effects = {
         container.appendChild(canvas);
 
         const ctx = canvas.getContext('2d');
-        let width, height;
+        let width = 0, height = 0;
         let frameCount = 0;
         let glitchBarY = 0;
 
-        const resize = () => {
-            const rect = container.getBoundingClientRect();
-            width = canvas.width = rect.width;
-            height = canvas.height = rect.height;
-        };
-        window.addEventListener('resize', resize);
-        resize();
-
         const draw = () => {
+            const size = Effects.checkCanvasSize(canvas, container);
+            width = size.width;
+            height = size.height;
+
             frameCount++;
             ctx.clearRect(0, 0, width, height);
 
@@ -1184,7 +1138,6 @@ const Effects = {
             }
             ctx.putImageData(imgData, 0, 0);
 
-            // Occasional tracking glitch bar (chromatic distortion sweep)
             if (Math.random() < 0.06 && glitchBarY === 0) {
                 glitchBarY = Math.random() * height * 0.5;
             }
@@ -1214,7 +1167,6 @@ const Effects = {
 
         Effects.activeCleanups.push(() => {
             clearInterval(interval);
-            window.removeEventListener('resize', resize);
         });
     },
 
@@ -1236,26 +1188,19 @@ const Effects = {
         container.appendChild(canvas);
 
         const ctx = canvas.getContext('2d');
-        let width, height;
+        let width = 0, height = 0;
         let symbols = [];
         let timer = 0;
         let scannerY = 0;
-
-        const resize = () => {
-            const rect = container.getBoundingClientRect();
-            width = canvas.width = rect.width;
-            height = canvas.height = rect.height;
-        };
-        window.addEventListener('resize', resize);
-        resize();
-
         const chars = "01ABCDEFx_#@$!+";
+
         const draw = () => {
-            ctx.clearRect(0, 0, width, height);
+            const size = Effects.checkCanvasSize(canvas, container);
+            width = size.width;
+            height = size.height;
 
             timer++;
 
-            // Draw faint digital backdrop grid
             ctx.strokeStyle = 'rgba(59, 130, 246, 0.015)';
             ctx.lineWidth = 1;
             for (let x = 0; x < width; x += 16) {
@@ -1334,7 +1279,6 @@ const Effects = {
 
         Effects.activeCleanups.push(() => {
             clearInterval(interval);
-            window.removeEventListener('resize', resize);
         });
     },
 
@@ -1356,20 +1300,12 @@ const Effects = {
         container.appendChild(canvas);
 
         const ctx = canvas.getContext('2d');
-        let width, height;
+        let width = 0, height = 0;
         let points = [];
         let droplets = [];
         let drawingTimer = 0;
         let drawColor = 'rgba(99, 102, 241, 0.4)';
         let isDrawing = false;
-
-        const resize = () => {
-            const rect = container.getBoundingClientRect();
-            width = canvas.width = rect.width;
-            height = canvas.height = rect.height;
-        };
-        window.addEventListener('resize', resize);
-        resize();
 
         const colors = [
             'rgba(99, 102, 241, 0.45)',
@@ -1379,6 +1315,10 @@ const Effects = {
         ];
 
         const draw = () => {
+            const size = Effects.checkCanvasSize(canvas, container);
+            width = size.width;
+            height = size.height;
+
             ctx.clearRect(0, 0, width, height);
 
             drawingTimer++;
@@ -1405,7 +1345,6 @@ const Effects = {
                         alpha: 1.0
                     });
 
-                    // Occasionally spawn falling paint droplet
                     if (Math.random() < 0.25) {
                         droplets.push({
                             x: last.x,
@@ -1422,7 +1361,6 @@ const Effects = {
                 }
             }
 
-            // Draw/update falling droplets
             droplets.forEach((d, idx) => {
                 d.y += d.vy;
                 d.alpha -= 0.012;
@@ -1466,7 +1404,6 @@ const Effects = {
 
         Effects.activeCleanups.push(() => {
             clearInterval(interval);
-            window.removeEventListener('resize', resize);
         });
     },
 
