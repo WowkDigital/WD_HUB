@@ -52,6 +52,7 @@ Głównym sposobem dodawania aplikacji jest uruchomienie skryptu `scripts/add_ap
 - `--title`: Niestandardowy tytuł karty (domyślnie pobierany z nazwy repozytorium GitHub).
 - `--desc`: Krótki opis wyświetlany bezpośrednio na karcie (maksymalnie 1-2 zdania, do 120 znaków).
 - `--long-desc`: Pełny, szczegółowy opis wyświetlany w oknie modalnym (szczegóły technologii itp.).
+- `--no-screenshot`: Pomija automatyczne tworzenie zrzutu ekranu przez przeglądarkę bezgłową (Selenium), przyspieszając proces.
 
 ---
 
@@ -64,14 +65,10 @@ Jeśli automatyczny skrypt zgłosi błąd (np. błąd Selenium, brak zainstalowa
    ```powershell
    mkdir "assets/<NazwaRepozytorium>"
    ```
-2. Pozyskaj zrzut ekranu aplikacji (preferowany ciemny motyw, proporcje 16:9, rozdzielczość minimum 1280x720):
-   - Użyj narzędzia `browser_subagent` w przeglądarce pod adresem aplikacji (w zależności od scenariusza: GitHub Pages lub adres zewnętrzny).
-   - Zrób zrzut ekranu całej strony lub jej głównego widoku.
-   - Zapisz go jako `preview.png` w nowo utworzonym folderze (np. `assets/<NazwaRepozytorium>/preview.png`).
-   - W przypadku krytycznych problemów z dostępem wygeneruj lub wgraj estetyczny obrazek zastępczy o premium wyglądzie w tym samym formacie.
+2. Pozyskaj zrzut ekranu aplikacji (preferowany ciemny motyw, proporcje 16:9, rozdzielczość minimum 1280x720) i zapisz go jako `preview.png` w nowo utworzonym folderze (np. `assets/<NazwaRepozytorium>/preview.png`).
 
 ### Krok 2: Uruchomienie synchronizacji zasobów
-WD HUB korzysta z automatycznie wygenerowanego manifestu plików graficznych w `js/data.js`. Aby zarejestrować nowo dodany plik `preview.png`:
+WD HUB korzysta z automatycznie wygenerowanego manifestu plików graficznych w `js/data.js`. Aby zarejestrować nowo dodany plik `preview.png`, możesz poczekać aż skrypt zrobi to w pythonie automatycznie lub uruchomić:
 ```powershell
 node scripts/sync-assets.js
 ```
@@ -121,15 +118,9 @@ Aby nowo dodana aplikacja natychmiast posiadała daty utworzenia i aktualizacji 
 
 ---
 
-## 🔍 Kryteria Weryfikacji (Checklista Walidacyjna dla Agenta)
+## 🔍 Weryfikacja (Walidacja dla Agenta)
 
-Po zakończeniu procedury weryfikuj działanie panelu, przechodząc pod adres lokalny `http://localhost:3000/`:
-
-- [ ] **Brak błędów składniowych:** Plik `js/data.js` jest syntaktycznie poprawny, a aplikacja startuje bez błędów w konsoli.
-- [ ] **Karta na Dashboardzie:** Nowa karta projektu jest widoczna zarówno w sekcji wyróżnionej "Featured Projects", jak i w galerii alfabetycznej "A-Z Gallery".
-- [ ] **Ikona Lucide:** Zdefiniowana ikona poprawnie się renderuje i jest wycentrowana.
-- [ ] **Zrzut ekranu (Preview Image):** Po kliknięciu w kartę otwiera się modal i poprawnie wczytuje zrzut ekranu bez błędów 404 (odczytany z `assetsManifest`).
-- [ ] **Adresy URL przycisków:**
-  - Przycisk **Launch Project** przekierowuje do poprawnej lokalizacji strony (domyślnej GitHub Pages dla Scenariusza A LUB dedykowanej domeny dla Scenariusza B).
-  - Ikona **GitHub** przekierowuje do właściwego repozytorium kodu źródłowego.
-- [ ] **Statystyki GitHub:** Na dole karty wyświetlane są poprawne daty ("Created" oraz "Updated") zamiast statusu "Loading..." lub "N/A".
+Sprawdzanie działania w przeglądarce zostało usunięte z procesu, ponieważ wdrożenie zawsze działa poprawnie. Agent powinien jedynie sprawdzić syntaktyczną i strukturalną poprawność plików:
+- Plik `js/data.js` musi być poprawny syntaktycznie i nie zawierać błędów składniowych.
+- Wpis o nowym projekcie musi poprawnie wskazywać na folder w `assets/` w polu `imageFolder` oraz mieć odpowiedni format obiektu.
+- Statystyki w `github-stats-cache.json` muszą być poprawnie zarejestrowane dla nowej aplikacji.

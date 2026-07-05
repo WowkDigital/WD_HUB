@@ -46,6 +46,7 @@ def main():
     parser.add_argument("--title", help="Custom title (defaults to Repository Name)")
     parser.add_argument("--desc", help="Custom short description")
     parser.add_argument("--long-desc", help="Custom long description")
+    parser.add_argument("--no-screenshot", action="store_true", help="Skip capturing preview image via headless browser")
 
     args = parser.parse_args()
 
@@ -92,53 +93,89 @@ def main():
     print(f"Short Description: {short_desc}")
     
     # 2. Capture preview image
-    print("Launching headless browser to capture preview image...")
-    options = Options()
-    options.add_argument('--headless')
-    options.add_argument('--window-size=1536,1000')
-    options.add_argument('--disable-gpu')
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-dev-shm-usage')
+    assets_dir = os.path.join("assets", repo_name)
+    os.makedirs(assets_dir, exist_ok=True)
 
-    driver = webdriver.Chrome(options=options)
-    try:
-        driver.get(app_url)
-        time.sleep(4)
-        
-        # Look for buttons that look like Guest/Demo login to bypass auth if possible
-        guest_keywords = ["Try as Guest", "Guest", "Zaloguj jako gość", "Demo", "Skip login", "Zacznij jako gość"]
-        for keyword in guest_keywords:
+    if args.no_screenshot:
+        print("Skipping headless browser screenshot capture (--no-screenshot).")
+    else:
+        print("Launching headless browser to capture preview image...")
+        options = Options()
+        options.add_argument('--headless')
+        options.add_argument('--window-size=1536,1000')
+        options.add_argument('--disable-gpu')
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-dev-shm-usage')
+
+        try:
+            driver = webdriver.Chrome(options=options)
             try:
-                buttons = driver.find_elements(By.XPATH, f"//*[contains(text(), '{keyword}')]")
-                if buttons:
-                    buttons[0].click()
-                    print(f"Clicked guest button matching keyword '{keyword}', waiting for page transition...")
-                    time.sleep(4)
-                    break
-            except Exception:
-                continue
-        
-        assets_dir = os.path.join("assets", repo_name)
-        os.makedirs(assets_dir, exist_ok=True)
-        screenshot_path = os.path.join(assets_dir, "preview.png")
-        driver.save_screenshot(screenshot_path)
-        print(f"Successfully saved preview image to {screenshot_path}")
-    except Exception as e:
-        print(f"Warning: Error capturing preview image: {e}")
-        print("Creating directory structure without screenshot...")
-        assets_dir = os.path.join("assets", repo_name)
-        os.makedirs(assets_dir, exist_ok=True)
-    finally:
-        driver.quit()
+                driver.get(app_url)
+                time.sleep(4)
+                
+                # Look for buttons that look like Guest/Demo login to bypass auth if possible
+                guest_keywords = ["Try as Guest", "Guest", "Zaloguj jako gość", "Demo", "Skip login", "Zacznij jako gość"]
+                for keyword in guest_keywords:
+                    try:
+                        buttons = driver.find_elements(By.XPATH, f"//*[contains(text(), '{keyword}')]")
+                        if buttons:
+                            buttons[0].click()
+                            print(f"Clicked guest button matching keyword '{keyword}', waiting for page transition...")
+                            time.sleep(4)
+                            break
+                    except Exception:
+                        continue
+                
+                screenshot_path = os.path.join(assets_dir, "preview.png")
+                driver.save_screenshot(screenshot_path)
+                print(f"Successfully saved preview image to {screenshot_path}")
+            finally:
+                driver.quit()
+        except Exception as e:
+            print(f"Warning: Error capturing preview image: {e}")
+            print("Continuing without updating screenshot...")
 
-    # 3. Synchronize assets (run scripts/sync-assets.js)
-    print("Synchronizing assets (running sync-assets.js)...")
+    # 3. Synchronize assets (Python native version with Node fallback)
+    print("Synchronizing assets...")
+    sync_success = False
     try:
-        # Use shell=True for Windows compatibility
-        subprocess.run(["node", "scripts/sync-assets.js"], shell=True, check=True)
+        data_file_path = os.path.join("js", "data.js")
+        if os.path.exists("assets") and os.path.exists(data_file_path):
+            manifest = {}
+            for item in os.listdir("assets"):
+                full_path = os.path.join("assets", item)
+                if os.path.isdir(full_path):
+                    files = []
+                    for file in os.listdir(full_path):
+                        if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp')):
+                            files.append(f"assets/{item}/{file}")
+                    manifest[f"assets/{item}"] = files
+
+            with open(data_file_path, "r", encoding="utf-8") as f:
+                content = f.read()
+
+            manifest_json = json.dumps(manifest, indent=4)
+            # Reformat to match JS format: use double quotes and format properly
+            regex = r"const assetsManifest = \{[\s\S]*?\};"
+            replacement = f"const assetsManifest = {manifest_json};"
+            
+            if re.search(regex, content):
+                content = re.sub(regex, replacement, content)
+                with open(data_file_path, "w", encoding="utf-8") as f:
+                    f.write(content)
+                print("Successfully synchronized assets (Python native).")
+                sync_success = True
     except Exception as e:
-        print(f"Error running sync-assets.js: {e}")
-        return
+        print(f"Warning: Python asset sync failed: {e}. Trying Node.js fallback...")
+
+    if not sync_success:
+        try:
+            # Use shell=True for Windows compatibility
+            subprocess.run(["node", "scripts/sync-assets.js"], shell=True, check=True)
+            print("Successfully synchronized assets (Node.js fallback).")
+        except Exception as e:
+            print(f"Error running sync-assets.js fallback: {e}")
+            return
 
     # 4. Register in js/data.js
     data_file_path = os.path.join("js", "data.js")

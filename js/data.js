@@ -16,6 +16,9 @@ const assetsManifest = {
     "assets/Clipboard_WD": [
         "assets/Clipboard_WD/preview.png"
     ],
+    "assets/CollabDraw_WD": [
+        "assets/CollabDraw_WD/preview.png"
+    ],
     "assets/DualQR_WD": [
         "assets/DualQR_WD/preview.png"
     ],
@@ -401,6 +404,17 @@ const projects = [
         color: "blue-500",
         effect: "hueRotate",
         imageFolder: "assets/DualQR_WD"
+    },
+    {
+        title: "CollabDraw_WD",
+        description: "A Wowk Digital project.",
+        longDescription: "An interactive web application developed by Wowk Digital.",
+        url: "https://wowkdigital.dkonto.pl/CollabDraw_WD/",
+        github: "https://github.com/WowkDigital/CollabDraw_WD",
+        icon: "brush",
+        color: "blue-500",
+        effect: "neon",
+        imageFolder: "assets/CollabDraw_WD"
     }
 ];
 
