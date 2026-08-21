@@ -47,6 +47,9 @@ const assetsManifest = {
     "assets/MemoCard": [
         "assets/MemoCard/preview.png"
     ],
+    "assets/OpenGraphWD": [
+        "assets/OpenGraphWD/preview.png"
+    ],
     "assets/PerlinNoise": [
         "assets/PerlinNoise/preview.png"
     ],
@@ -415,6 +418,17 @@ const projects = [
         color: "blue-500",
         effect: "draw",
         imageFolder: "assets/CollabDraw_WD"
+    },
+    {
+        title: "OpenGraph Studio",
+        description: "100% Client-Side Meta & Media Generator with Gemini AI, live social previews and visual editor.",
+        longDescription: "Kompleksowe narzędzie do generowania, edycji i podglądu tagów Open Graph, Twitter Cards i grafik w czasie rzeczywistym z integracją Google Gemini AI.",
+        url: "https://wowkdigital.github.io/OpenGraphWD/",
+        github: "https://github.com/WowkDigital/OpenGraphWD",
+        icon: "share-2",
+        color: "indigo-500",
+        effect: "hueRotate",
+        imageFolder: "assets/OpenGraphWD"
     }
 ];
 
